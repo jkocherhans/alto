@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="navbar navbar-fixed-bottom">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="#">Django Inspector</a>
+          <ul class="nav">
+            <li class="active"><a href="#">URLs</a></li>
+            <li><a href="#">Apps</a></li>
+            <li><a href="#">Models</a></li>
+            <li><a href="#">Tags/Filters</a></li>
+            <li><a href="#">Settings</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span6">
+          <!--Sidebar content-->
+          <ul class="nav nav-pills nav-stacked">
+            <li class="active"><a href="#"><code>homepage/$</code><code style="float: right">@login_required</code></a></li>
+            <li><a href="#"><code>blogs/$</code></a></li>
+            <li><a href="#"><code>blogs/(\d+)/$</code></a></li>
+            <li><a href="#"><code>blogs/(\d+)/posts/(\d+)/$</code><code style="float: right">post_detail</code></a></li>
+          </ul>
+        </div>
+        <div class="span6">
+          <!--Body content-->
+          <dl class="dl-horizontal">
+            <dt>Name</dt><dd>homepage</dd>
+            <dt>View</dt><dd>testproject.views.homepage</dd>
+            <dt>Decorators</dt><dd>@login_required</dd>
+            <dt>File</dt><dd><a href="mvim://open?url=file:///Users/jkocherhans/Projects/urlviz/testproj/views.py&line=12">urlviz/testproj/views.py</a></dd>
+            <dt>Doc</dt><dd>The home page.</dd>
+          </dl>
+
+<pre>
+    @login_required
+    def homepage(request):
+        """
+        The home page.
+        """
+        return http.HttpResponse('hi!')
+</pre>
+        </div>
+      </div>
+    </div>
+
+    <script href="bootstrap/js/bootstrap.js" type="text/javascript">
+  </body>
+</html>
+
