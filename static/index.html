@@ -4,6 +4,16 @@
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="codemirror/lib/codemirror.css" type="text/css">
     <link rel="stylesheet" href="codemirror/theme/elegant.css" type="text/css">
+    <style>
+      .CodeMirror-scroll {
+        height: auto;
+        overflow-y: hidden;
+        overflow-x: auto;
+      }
+      .CodeMirror-wrap {
+        margin-top: 5px;
+      }
+    </style>
   </head>
   <body>
     <div class="navbar navbar-fixed-bottom">
@@ -26,22 +36,19 @@
         <div class="span6">
           <!--Sidebar content-->
           <ul class="nav nav-pills nav-stacked">
-            <li class="active"><a href="#"><code>homepage/$</code><code style="float: right">@login_required</code></a></li>
+            <li class="active"><a href="#"><code>homepage/$</code></a></li>
             <li><a href="#"><code>blogs/$</code></a></li>
             <li><a href="#"><code>blogs/(\d+)/$</code></a></li>
-            <li><a href="#"><code>blogs/(\d+)/posts/(\d+)/$</code><code style="float: right">post_detail</code></a></li>
+            <li><a href="#"><code>blogs/(\d+)/posts/(\d+)/$</code></a></li>
           </ul>
         </div>
         <div class="span6">
           <!--Body content-->
-          <dl class="dl-horizontal">
-            <dt>Name</dt><dd>homepage</dd>
-            <dt>View</dt><dd>testproject.views.homepage</dd>
-            <dt>Decorators</dt><dd>@login_required</dd>
-            <dt>File</dt><dd><a href="mvim://open?url=file:///Users/jkocherhans/Projects/urlviz/testproj/views.py&line=12">urlviz/testproj/views.py</a></dd>
-            <dt>Doc</dt><dd>The home page.</dd>
-          </dl>
-<textarea cols="80" rows="10" id="editor">
+          <div>
+            <h3 id="viewname">testproject.views.homepage</h3>
+            <code><a href="mvim://open?url=file:///Users/jkocherhans/Projects/urlviz/testproj/views.py&line=12">urlviz/testproj/views.py</a></code>
+          </div>
+<textarea cols="80" rows="10" id="viewcode">
 @login_required
 def homepage(request):
     """
@@ -57,7 +64,7 @@ def homepage(request):
     <script src="codemirror/lib/codemirror.js"></script>
     <script src="codemirror/mode/python/python.js"></script>
     <script>
-      CodeMirror.fromTextArea(document.getElementById('editor'), {
+      CodeMirror.fromTextArea(document.getElementById('viewcode'), {
         mode: "python",
         theme: "elegant",
         lineWrapping: true,
