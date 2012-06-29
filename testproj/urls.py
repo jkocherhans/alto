@@ -14,12 +14,12 @@ from testproj import views
 # args, kwargs, *args, **kwargs
 
 urlpatterns = patterns('',
-    (r'^home$', 'testproj.views.home'),
-    (r'^home-callable$', views.home),
+    (r'home/$', 'testproj.views.home'),
+    (r'home-callable/$', views.home),
 
-    url('r^about/$', 'testproj.views.about'),
-    url('r^about-named/$', 'testproj.views.about', name='about'),
-    url('r^about-with-default-args/$', 'testproj.views.about', {'testing': True }),
+    url(r'about/$', 'testproj.views.about'),
+    url(r'about-named/$', 'testproj.views.about', name='about'),
+    url(r'about-with-default-args/$', 'testproj.views.about', {'testing': True }),
 
     (r'protected/$', views.protected),
     (r'protected-and-cached/$', views.protected_and_cached),
