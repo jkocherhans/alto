@@ -1,6 +1,6 @@
 import ast
 import inspect
-import pprint
+import json
 import re
 from django.conf import settings
 from django.core import urlresolvers
@@ -80,6 +80,7 @@ def inspect_pattern(pattern):
     }
 
 def main():
+    patterns = []
     # This can't map out a url conf that is set on the request by middleware.
     urlconf = settings.ROOT_URLCONF
     urlresolvers.set_urlconf(urlconf)
@@ -96,7 +97,8 @@ def main():
             'decorators': [inspect_decorator(d) for d in get_decorators(view)],
             'args': inspect_args(view),
         }
-        pprint.pprint({'pattern': pattern_data, 'view': view_data})
+        patterns.append({'pattern': pattern_data, 'view': view_data})
+    print json.dumps(patterns, sort_keys=True, indent=2)
 
 if __name__ == '__main__':
     main()
