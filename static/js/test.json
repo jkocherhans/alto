@@ -1,0 +1,354 @@
+[
+  {
+    "pattern": {
+      "capture_groups": [], 
+      "default_args": {}, 
+      "name": null, 
+      "regex": "home/$"
+    }, 
+    "view": {
+      "args": {
+        "args": [
+          "request"
+        ], 
+        "defaults": null, 
+        "format": "(request)", 
+        "keywords": null, 
+        "varargs": null
+      }, 
+      "decorators": [], 
+      "doc": "The homepage.", 
+      "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "name": "home", 
+      "source": "def home(request):\n    \"\"\"\n    The homepage.\n    \"\"\"\n    return http.HttpResponse('home')\n"
+    }
+  }, 
+  {
+    "pattern": {
+      "capture_groups": [], 
+      "default_args": {}, 
+      "name": null, 
+      "regex": "home-callable/$"
+    }, 
+    "view": {
+      "args": {
+        "args": [
+          "request"
+        ], 
+        "defaults": null, 
+        "format": "(request)", 
+        "keywords": null, 
+        "varargs": null
+      }, 
+      "decorators": [], 
+      "doc": "The homepage.", 
+      "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "name": "home", 
+      "source": "def home(request):\n    \"\"\"\n    The homepage.\n    \"\"\"\n    return http.HttpResponse('home')\n"
+    }
+  }, 
+  {
+    "pattern": {
+      "capture_groups": [], 
+      "default_args": {}, 
+      "name": null, 
+      "regex": "about/$"
+    }, 
+    "view": {
+      "args": {
+        "args": [
+          "request", 
+          "test"
+        ], 
+        "defaults": [
+          false
+        ], 
+        "format": "(request, test=False)", 
+        "keywords": null, 
+        "varargs": null
+      }, 
+      "decorators": [], 
+      "doc": "The about page.", 
+      "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "name": "about", 
+      "source": "def about(request, test=False):\n    \"\"\"\n    The about page.\n    \"\"\"\n    return http.HttpResponse('about')\n"
+    }
+  }, 
+  {
+    "pattern": {
+      "capture_groups": [], 
+      "default_args": {}, 
+      "name": "about", 
+      "regex": "about-named/$"
+    }, 
+    "view": {
+      "args": {
+        "args": [
+          "request", 
+          "test"
+        ], 
+        "defaults": [
+          false
+        ], 
+        "format": "(request, test=False)", 
+        "keywords": null, 
+        "varargs": null
+      }, 
+      "decorators": [], 
+      "doc": "The about page.", 
+      "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "name": "about", 
+      "source": "def about(request, test=False):\n    \"\"\"\n    The about page.\n    \"\"\"\n    return http.HttpResponse('about')\n"
+    }
+  }, 
+  {
+    "pattern": {
+      "capture_groups": [], 
+      "default_args": {
+        "testing": true
+      }, 
+      "name": null, 
+      "regex": "about-with-default-args/$"
+    }, 
+    "view": {
+      "args": {
+        "args": [
+          "request", 
+          "test"
+        ], 
+        "defaults": [
+          false
+        ], 
+        "format": "(request, test=False)", 
+        "keywords": null, 
+        "varargs": null
+      }, 
+      "decorators": [], 
+      "doc": "The about page.", 
+      "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "name": "about", 
+      "source": "def about(request, test=False):\n    \"\"\"\n    The about page.\n    \"\"\"\n    return http.HttpResponse('about')\n"
+    }
+  }, 
+  {
+    "pattern": {
+      "capture_groups": [], 
+      "default_args": {}, 
+      "name": null, 
+      "regex": "protected/$"
+    }, 
+    "view": {
+      "args": {
+        "args": [
+          "request"
+        ], 
+        "defaults": null, 
+        "format": "(request)", 
+        "keywords": null, 
+        "varargs": null
+      }, 
+      "decorators": [
+        {
+          "args": {
+            "args": [
+              "view"
+            ], 
+            "defaults": null, 
+            "format": "(view)", 
+            "keywords": null, 
+            "varargs": null
+          }, 
+          "doc": "Decorator for requiring a logged-in user.", 
+          "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+          "name": "require_login", 
+          "source": "def require_login(view):\n    \"\"\"\n    Decorator for requiring a logged-in user.\n    \"\"\"\n    def wrapper(request, *args, **kwargs):\n        return view(request, *args, **kwargs)\n    return wrapper\n"
+        }
+      ], 
+      "doc": "A protected page.", 
+      "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "name": "protected", 
+      "source": "@require_login\ndef protected(request):\n    \"\"\"\n    A protected page.\n    \"\"\"\n    return http.HttpResponse('protected')\n"
+    }
+  }, 
+  {
+    "pattern": {
+      "capture_groups": [], 
+      "default_args": {}, 
+      "name": null, 
+      "regex": "protected-and-cached/$"
+    }, 
+    "view": {
+      "args": {
+        "args": [
+          "request"
+        ], 
+        "defaults": null, 
+        "format": "(request)", 
+        "keywords": null, 
+        "varargs": null
+      }, 
+      "decorators": [
+        {
+          "args": {
+            "args": [
+              "view"
+            ], 
+            "defaults": null, 
+            "format": "(view)", 
+            "keywords": null, 
+            "varargs": null
+          }, 
+          "doc": "Decorator for requiring a logged-in user.", 
+          "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+          "name": "require_login", 
+          "source": "def require_login(view):\n    \"\"\"\n    Decorator for requiring a logged-in user.\n    \"\"\"\n    def wrapper(request, *args, **kwargs):\n        return view(request, *args, **kwargs)\n    return wrapper\n"
+        }, 
+        {
+          "args": {
+            "args": [
+              "view"
+            ], 
+            "defaults": null, 
+            "format": "(view)", 
+            "keywords": null, 
+            "varargs": null
+          }, 
+          "doc": "Decorator for requiring a caching a view.", 
+          "file": "/Users/jkocherhans/Projects/urlviz/testproj/decorators.py", 
+          "name": "cache", 
+          "source": "def cache(view):\n    \"\"\"\n    Decorator for requiring a caching a view.\n    \"\"\"\n    def wrapper(request, *args, **kwargs):\n        return view(request, *args, **kwargs)\n    return wrapper\n"
+        }
+      ], 
+      "doc": "A protected and cached page.", 
+      "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "name": "protected_and_cached", 
+      "source": "@require_login\n@decorators.cache\ndef protected_and_cached(request):\n    \"\"\"\n    A protected and cached page.\n    \"\"\"\n    return http.HttpResponse('protected and cached')\n"
+    }
+  }, 
+  {
+    "pattern": {
+      "capture_groups": [
+        {
+          "name": null, 
+          "pattern": "(\\d+)"
+        }
+      ], 
+      "default_args": {}, 
+      "name": null, 
+      "regex": "blogs/(\\d+)/$"
+    }, 
+    "view": {
+      "args": {
+        "args": [
+          "blog_id"
+        ], 
+        "defaults": null, 
+        "format": "(blog_id)", 
+        "keywords": null, 
+        "varargs": null
+      }, 
+      "decorators": [], 
+      "doc": "The detail page for a blog.", 
+      "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "name": "blog_detail", 
+      "source": "def blog_detail(blog_id):\n    \"\"\"\n    The detail page for a blog.\n    \"\"\"\n    return http.HttpResponse('blog: %s' % blog_id)\n"
+    }
+  }, 
+  {
+    "pattern": {
+      "capture_groups": [
+        {
+          "name": "slug", 
+          "pattern": "(?P<slug>[\\w-]+)"
+        }
+      ], 
+      "default_args": {}, 
+      "name": null, 
+      "regex": "blogs/(?P<slug>[\\w-]+)/$"
+    }, 
+    "view": {
+      "args": {
+        "args": [
+          "blog_id"
+        ], 
+        "defaults": null, 
+        "format": "(blog_id)", 
+        "keywords": null, 
+        "varargs": null
+      }, 
+      "decorators": [], 
+      "doc": "The detail page for a blog.", 
+      "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "name": "blog_detail", 
+      "source": "def blog_detail(blog_id):\n    \"\"\"\n    The detail page for a blog.\n    \"\"\"\n    return http.HttpResponse('blog: %s' % blog_id)\n"
+    }
+  }, 
+  {
+    "pattern": {
+      "capture_groups": [
+        {
+          "name": null, 
+          "pattern": "(\\d+)"
+        }, 
+        {
+          "name": null, 
+          "pattern": "(\\d+)"
+        }
+      ], 
+      "default_args": {}, 
+      "name": null, 
+      "regex": "blogs/(\\d+)/posts/(\\d+)/$"
+    }, 
+    "view": {
+      "args": {
+        "args": [
+          "blog_id", 
+          "post_id"
+        ], 
+        "defaults": null, 
+        "format": "(blog_id, post_id)", 
+        "keywords": null, 
+        "varargs": null
+      }, 
+      "decorators": [], 
+      "doc": "The detail page for a blog post.", 
+      "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "name": "post_detail", 
+      "source": "def post_detail(blog_id, post_id):\n    \"\"\"\n    The detail page for a blog post.\n    \"\"\"\n    return http.HttpResponse('blog: %s post: %s' % (blog_id, post_id))\n"
+    }
+  }, 
+  {
+    "pattern": {
+      "capture_groups": [
+        {
+          "name": "slug", 
+          "pattern": "(?P<slug>[\\w-]+)"
+        }, 
+        {
+          "name": "comment_id", 
+          "pattern": "(?P<comment_id>\\d+)"
+        }
+      ], 
+      "default_args": {}, 
+      "name": null, 
+      "regex": "blogs/(?P<slug>[\\w-]+)/posts/(?P<comment_id>\\d+)/$"
+    }, 
+    "view": {
+      "args": {
+        "args": [
+          "blog_id", 
+          "post_id"
+        ], 
+        "defaults": null, 
+        "format": "(blog_id, post_id)", 
+        "keywords": null, 
+        "varargs": null
+      }, 
+      "decorators": [], 
+      "doc": "The detail page for a blog post.", 
+      "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "name": "post_detail", 
+      "source": "def post_detail(blog_id, post_id):\n    \"\"\"\n    The detail page for a blog post.\n    \"\"\"\n    return http.HttpResponse('blog: %s post: %s' % (blog_id, post_id))\n"
+    }
+  }
+]
