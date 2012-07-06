@@ -19,8 +19,16 @@
       "decorators": [], 
       "doc": "The homepage.", 
       "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "line_number": 12, 
       "name": "home", 
-      "source": "def home(request):\n    \"\"\"\n    The homepage.\n    \"\"\"\n    return http.HttpResponse('home')\n"
+      "source": "def home(request):\n    \"\"\"\n    The homepage.\n    \"\"\"\n    return http.HttpResponse('home')\n", 
+      "sourcelines": [
+        "def home(request):\n", 
+        "    \"\"\"\n", 
+        "    The homepage.\n", 
+        "    \"\"\"\n", 
+        "    return http.HttpResponse('home')\n"
+      ]
     }
   }, 
   {
@@ -43,8 +51,16 @@
       "decorators": [], 
       "doc": "The homepage.", 
       "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "line_number": 12, 
       "name": "home", 
-      "source": "def home(request):\n    \"\"\"\n    The homepage.\n    \"\"\"\n    return http.HttpResponse('home')\n"
+      "source": "def home(request):\n    \"\"\"\n    The homepage.\n    \"\"\"\n    return http.HttpResponse('home')\n", 
+      "sourcelines": [
+        "def home(request):\n", 
+        "    \"\"\"\n", 
+        "    The homepage.\n", 
+        "    \"\"\"\n", 
+        "    return http.HttpResponse('home')\n"
+      ]
     }
   }, 
   {
@@ -70,8 +86,16 @@
       "decorators": [], 
       "doc": "The about page.", 
       "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "line_number": 18, 
       "name": "about", 
-      "source": "def about(request, test=False):\n    \"\"\"\n    The about page.\n    \"\"\"\n    return http.HttpResponse('about')\n"
+      "source": "def about(request, test=False):\n    \"\"\"\n    The about page.\n    \"\"\"\n    return http.HttpResponse('about')\n", 
+      "sourcelines": [
+        "def about(request, test=False):\n", 
+        "    \"\"\"\n", 
+        "    The about page.\n", 
+        "    \"\"\"\n", 
+        "    return http.HttpResponse('about')\n"
+      ]
     }
   }, 
   {
@@ -97,8 +121,16 @@
       "decorators": [], 
       "doc": "The about page.", 
       "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "line_number": 18, 
       "name": "about", 
-      "source": "def about(request, test=False):\n    \"\"\"\n    The about page.\n    \"\"\"\n    return http.HttpResponse('about')\n"
+      "source": "def about(request, test=False):\n    \"\"\"\n    The about page.\n    \"\"\"\n    return http.HttpResponse('about')\n", 
+      "sourcelines": [
+        "def about(request, test=False):\n", 
+        "    \"\"\"\n", 
+        "    The about page.\n", 
+        "    \"\"\"\n", 
+        "    return http.HttpResponse('about')\n"
+      ]
     }
   }, 
   {
@@ -126,8 +158,16 @@
       "decorators": [], 
       "doc": "The about page.", 
       "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "line_number": 18, 
       "name": "about", 
-      "source": "def about(request, test=False):\n    \"\"\"\n    The about page.\n    \"\"\"\n    return http.HttpResponse('about')\n"
+      "source": "def about(request, test=False):\n    \"\"\"\n    The about page.\n    \"\"\"\n    return http.HttpResponse('about')\n", 
+      "sourcelines": [
+        "def about(request, test=False):\n", 
+        "    \"\"\"\n", 
+        "    The about page.\n", 
+        "    \"\"\"\n", 
+        "    return http.HttpResponse('about')\n"
+      ]
     }
   }, 
   {
@@ -166,8 +206,17 @@
       ], 
       "doc": "A protected page.", 
       "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "line_number": 24, 
       "name": "protected", 
-      "source": "@require_login\ndef protected(request):\n    \"\"\"\n    A protected page.\n    \"\"\"\n    return http.HttpResponse('protected')\n"
+      "source": "@require_login\ndef protected(request):\n    \"\"\"\n    A protected page.\n    \"\"\"\n    return http.HttpResponse('protected')\n", 
+      "sourcelines": [
+        "@require_login\n", 
+        "def protected(request):\n", 
+        "    \"\"\"\n", 
+        "    A protected page.\n", 
+        "    \"\"\"\n", 
+        "    return http.HttpResponse('protected')\n"
+      ]
     }
   }, 
   {
@@ -221,8 +270,18 @@
       ], 
       "doc": "A protected and cached page.", 
       "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "line_number": 31, 
       "name": "protected_and_cached", 
-      "source": "@require_login\n@decorators.cache\ndef protected_and_cached(request):\n    \"\"\"\n    A protected and cached page.\n    \"\"\"\n    return http.HttpResponse('protected and cached')\n"
+      "source": "@require_login\n@decorators.cache\ndef protected_and_cached(request):\n    \"\"\"\n    A protected and cached page.\n    \"\"\"\n    return http.HttpResponse('protected and cached')\n", 
+      "sourcelines": [
+        "@require_login\n", 
+        "@decorators.cache\n", 
+        "def protected_and_cached(request):\n", 
+        "    \"\"\"\n", 
+        "    A protected and cached page.\n", 
+        "    \"\"\"\n", 
+        "    return http.HttpResponse('protected and cached')\n"
+      ]
     }
   }, 
   {
@@ -250,8 +309,16 @@
       "decorators": [], 
       "doc": "The detail page for a blog.", 
       "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "line_number": 39, 
       "name": "blog_detail", 
-      "source": "def blog_detail(blog_id):\n    \"\"\"\n    The detail page for a blog.\n    \"\"\"\n    return http.HttpResponse('blog: %s' % blog_id)\n"
+      "source": "def blog_detail(blog_id):\n    \"\"\"\n    The detail page for a blog.\n    \"\"\"\n    return http.HttpResponse('blog: %s' % blog_id)\n", 
+      "sourcelines": [
+        "def blog_detail(blog_id):\n", 
+        "    \"\"\"\n", 
+        "    The detail page for a blog.\n", 
+        "    \"\"\"\n", 
+        "    return http.HttpResponse('blog: %s' % blog_id)\n"
+      ]
     }
   }, 
   {
@@ -279,8 +346,16 @@
       "decorators": [], 
       "doc": "The detail page for a blog.", 
       "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "line_number": 39, 
       "name": "blog_detail", 
-      "source": "def blog_detail(blog_id):\n    \"\"\"\n    The detail page for a blog.\n    \"\"\"\n    return http.HttpResponse('blog: %s' % blog_id)\n"
+      "source": "def blog_detail(blog_id):\n    \"\"\"\n    The detail page for a blog.\n    \"\"\"\n    return http.HttpResponse('blog: %s' % blog_id)\n", 
+      "sourcelines": [
+        "def blog_detail(blog_id):\n", 
+        "    \"\"\"\n", 
+        "    The detail page for a blog.\n", 
+        "    \"\"\"\n", 
+        "    return http.HttpResponse('blog: %s' % blog_id)\n"
+      ]
     }
   }, 
   {
@@ -313,8 +388,16 @@
       "decorators": [], 
       "doc": "The detail page for a blog post.", 
       "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "line_number": 45, 
       "name": "post_detail", 
-      "source": "def post_detail(blog_id, post_id):\n    \"\"\"\n    The detail page for a blog post.\n    \"\"\"\n    return http.HttpResponse('blog: %s post: %s' % (blog_id, post_id))\n"
+      "source": "def post_detail(blog_id, post_id):\n    \"\"\"\n    The detail page for a blog post.\n    \"\"\"\n    return http.HttpResponse('blog: %s post: %s' % (blog_id, post_id))\n", 
+      "sourcelines": [
+        "def post_detail(blog_id, post_id):\n", 
+        "    \"\"\"\n", 
+        "    The detail page for a blog post.\n", 
+        "    \"\"\"\n", 
+        "    return http.HttpResponse('blog: %s post: %s' % (blog_id, post_id))\n"
+      ]
     }
   }, 
   {
@@ -347,8 +430,16 @@
       "decorators": [], 
       "doc": "The detail page for a blog post.", 
       "file": "/Users/jkocherhans/Projects/urlviz/testproj/views.py", 
+      "line_number": 45, 
       "name": "post_detail", 
-      "source": "def post_detail(blog_id, post_id):\n    \"\"\"\n    The detail page for a blog post.\n    \"\"\"\n    return http.HttpResponse('blog: %s post: %s' % (blog_id, post_id))\n"
+      "source": "def post_detail(blog_id, post_id):\n    \"\"\"\n    The detail page for a blog post.\n    \"\"\"\n    return http.HttpResponse('blog: %s post: %s' % (blog_id, post_id))\n", 
+      "sourcelines": [
+        "def post_detail(blog_id, post_id):\n", 
+        "    \"\"\"\n", 
+        "    The detail page for a blog post.\n", 
+        "    \"\"\"\n", 
+        "    return http.HttpResponse('blog: %s post: %s' % (blog_id, post_id))\n"
+      ]
     }
   }
 ]

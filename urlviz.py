@@ -89,10 +89,13 @@ def main():
         view, decorators = extract_view(pattern.callback)
         argspec = inspect.getargspec(view)
         pattern_data = inspect_pattern(pattern)
+        source_lines, line_number = inspect.getsourcelines(view)
         view_data = {
             'file': inspect.getsourcefile(view),
             'name': view.__name__,
             'source': inspect.getsource(view),
+            'sourcelines': source_lines,
+            'line_number': line_number,
             'doc': inspect.getdoc(view),
             'decorators': [inspect_decorator(d) for d in get_decorators(view)],
             'args': inspect_args(view),
