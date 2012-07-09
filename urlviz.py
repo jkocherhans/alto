@@ -13,7 +13,7 @@ def extract_view(view, decorators=None):
     # http://stackoverflow.com/questions/9222129/python-inspect-getmembers-does-not-return-the-actual-function-when-used-with-dec
     if decorators is None:
         decorators = []
-    if view.func_closure is not None:
+    if getattr(view, 'func_closure') is not None:
         decorators.append(view)
         return extract_view(view.func_closure[0].cell_contents, decorators)
     return view, decorators
@@ -79,29 +79,36 @@ def inspect_pattern(pattern):
         'capture_groups': parse_capture_groups(pattern.regex.pattern)
     }
 
-def main():
-    patterns = []
+def inspect_urlpatterns():
     # This can't map out a url conf that is set on the request by middleware.
     urlconf = settings.ROOT_URLCONF
     urlresolvers.set_urlconf(urlconf)
     resolver = urlresolvers.RegexURLResolver(r'^/', urlconf)
+    return get_resolver_data(resolver)
+
+def get_resolver_data(resolver):
+    patterns = []
     for pattern in resolver.url_patterns:
-        view, decorators = extract_view(pattern.callback)
-        argspec = inspect.getargspec(view)
-        pattern_data = inspect_pattern(pattern)
-        source_lines, line_number = inspect.getsourcelines(view)
-        view_data = {
-            'file': inspect.getsourcefile(view),
-            'name': view.__name__,
-            'source': inspect.getsource(view),
-            'sourcelines': source_lines,
-            'line_number': line_number,
-            'doc': inspect.getdoc(view),
-            'decorators': [inspect_decorator(d) for d in get_decorators(view)],
-            'args': inspect_args(view),
-        }
-        patterns.append({'pattern': pattern_data, 'view': view_data})
-    print json.dumps(patterns, sort_keys=True, indent=2)
+        if isinstance(pattern, urlresolvers.RegexURLResolver):
+            patterns.extend(get_resolver_data(pattern))
+        else:
+            view, decorators = extract_view(pattern.callback)
+            argspec = inspect.getargspec(view)
+            pattern_data = inspect_pattern(pattern)
+            source_lines, line_number = inspect.getsourcelines(view)
+            view_data = {
+                'file': inspect.getsourcefile(view),
+                'name': view.__name__,
+                'source': inspect.getsource(view),
+                'sourcelines': source_lines,
+                'line_number': line_number,
+                'doc': inspect.getdoc(view),
+                'decorators': [inspect_decorator(d) for d in get_decorators(view)],
+                'args': inspect_args(view),
+            }
+            patterns.append({'pattern': pattern_data, 'view': view_data})
+    return patterns
 
 if __name__ == '__main__':
-    main()
+    patterns = inspect_urlpatterns()
+    print json.dumps(patterns, sort_keys=True, indent=2)
