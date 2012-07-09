@@ -3,4 +3,5 @@ from inspector import views
 
 urlpatterns = patterns('',
     url(r'urlpatterns/$', views.url_patterns),
+    url(r'$', views.index),
 )
