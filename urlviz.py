@@ -70,10 +70,14 @@ def parse_capture_groups(regex):
         capture_groups.append({'name': name, 'pattern': pattern})
     return capture_groups
 
-def inspect_pattern(pattern):
+def inspect_pattern(pattern, prefix=None):
     capture_groups = parse_capture_groups(pattern.regex.pattern)
+    if prefix:
+        regex = prefix + pattern.regex.pattern
+    else:
+        regex = pattern.regex.pattern
     return {
-        'regex': pattern.regex.pattern,
+        'regex': regex,
         'name': pattern.name,
         'default_args': pattern.default_args,
         'capture_groups': parse_capture_groups(pattern.regex.pattern)
@@ -86,15 +90,17 @@ def inspect_urlpatterns():
     resolver = urlresolvers.RegexURLResolver(r'^/', urlconf)
     return get_resolver_data(resolver)
 
-def get_resolver_data(resolver):
+def get_resolver_data(resolver, prefix=None):
     patterns = []
+    resolver_prefix = getattr(getattr(resolver, 'regex'), 'pattern')
+    prefix = prefix + resolver_prefix if prefix else resolver_prefix
     for pattern in resolver.url_patterns:
         if isinstance(pattern, urlresolvers.RegexURLResolver):
-            patterns.extend(get_resolver_data(pattern))
+            patterns.extend(get_resolver_data(pattern, prefix=prefix))
         else:
             view, decorators = extract_view(pattern.callback)
             argspec = inspect.getargspec(view)
-            pattern_data = inspect_pattern(pattern)
+            pattern_data = inspect_pattern(pattern, prefix=prefix)
             source_lines, line_number = inspect.getsourcelines(view)
             view_data = {
                 'file': inspect.getsourcefile(view),
