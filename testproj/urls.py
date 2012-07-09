@@ -29,4 +29,5 @@ urlpatterns = patterns('',
     url(r'blogs/(\d+)/posts/(\d+)/$', views.post_detail),
     url(r'blogs/(?P<slug>[\w-]+)/posts/(?P<comment_id>\d+)/$', views.post_detail),
 
+    url(r'__inspector/', include('inspector.urls')),
 )
