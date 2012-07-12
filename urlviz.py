@@ -4,6 +4,7 @@ import json
 import re
 from django.conf import settings
 from django.core import urlresolvers
+from django.views.generic import View
 
 
 def extract_view(view, decorators=None):
@@ -13,9 +14,11 @@ def extract_view(view, decorators=None):
     # http://stackoverflow.com/questions/9222129/python-inspect-getmembers-does-not-return-the-actual-function-when-used-with-dec
     if decorators is None:
         decorators = []
-    if getattr(view, 'func_closure') is not None:
+    if getattr(view, 'func_closure', None) is not None:
         decorators.append(view)
-        return extract_view(view.func_closure[0].cell_contents, decorators)
+        for closure in view.func_closure:
+            if callable(closure.cell_contents):
+                return extract_view(closure.cell_contents, decorators)
     return view, decorators
 
 def get_decorators(func):
@@ -72,22 +75,50 @@ def parse_capture_groups(regex):
 
 def inspect_pattern(pattern, prefix=None):
     capture_groups = parse_capture_groups(pattern.regex.pattern)
-    if prefix:
-        regex = prefix + pattern.regex.pattern
+    view, decorators = extract_view(pattern.callback)
+    module = inspect.getmodule(view)
+
+    if inspect.isfunction(view) or inspect.ismethod(view):
+        pass
+    elif inspect.isclass(view):
+        pass
     else:
-        regex = pattern.regex.pattern
+        view = view.__class__
+
     return {
-        'regex': regex,
+        'view_module': module.__name__,
+        'view_name': view.__name__,
+        'prefix': prefix,
+        'regex': pattern.regex.pattern,
         'name': pattern.name,
         'default_args': pattern.default_args,
         'capture_groups': parse_capture_groups(pattern.regex.pattern)
     }
 
+def load_view(module_path, view_name):
+    import importlib
+    module = importlib.import_module(module_path)
+    return getattr(module, view_name)
+
+def inspect_view(view):
+    source_lines, line_number = inspect.getsourcelines(view)
+    data = {
+        'file': inspect.getsourcefile(view),
+        'name': view.__name__,
+        'source': inspect.getsource(view),
+        'sourcelines': source_lines,
+        'line_number': line_number,
+        'doc': inspect.getdoc(view),
+        #'decorators': [inspect_decorator(d) for d in get_decorators(view)],
+        #'args': inspect_args(view),
+    }
+    return data
+
 def inspect_urlpatterns():
     # This can't map out a url conf that is set on the request by middleware.
     urlconf = settings.ROOT_URLCONF
     urlresolvers.set_urlconf(urlconf)
-    resolver = urlresolvers.RegexURLResolver(r'^/', urlconf)
+    resolver = urlresolvers.RegexURLResolver(r'', urlconf)
     return get_resolver_data(resolver)
 
 def get_resolver_data(resolver, prefix=None):
@@ -97,22 +128,20 @@ def get_resolver_data(resolver, prefix=None):
     for pattern in resolver.url_patterns:
         if isinstance(pattern, urlresolvers.RegexURLResolver):
             patterns.extend(get_resolver_data(pattern, prefix=prefix))
-        else:
+        elif isinstance(pattern, urlresolvers.RegexURLPattern):
             view, decorators = extract_view(pattern.callback)
+            if inspect.isclass(view) and issubclass(view, View):
+                view = view.dispatch
+            elif inspect.isfunction(view) or inspect.ismethod(view):
+                pass
+            else:
+                view = view.__call__
             argspec = inspect.getargspec(view)
             pattern_data = inspect_pattern(pattern, prefix=prefix)
-            source_lines, line_number = inspect.getsourcelines(view)
-            view_data = {
-                'file': inspect.getsourcefile(view),
-                'name': view.__name__,
-                'source': inspect.getsource(view),
-                'sourcelines': source_lines,
-                'line_number': line_number,
-                'doc': inspect.getdoc(view),
-                'decorators': [inspect_decorator(d) for d in get_decorators(view)],
-                'args': inspect_args(view),
-            }
-            patterns.append({'pattern': pattern_data, 'view': view_data})
+            patterns.append({'pattern': pattern_data})#, 'view': view_data})
+        else:
+            print pattern
+            raise Exception('unknown object')
     return patterns
 
 if __name__ == '__main__':

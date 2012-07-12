@@ -1,10 +1,9 @@
-{% load static from staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'codemirror/lib/codemirror.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'codemirror/theme/elegant.css' %}" type="text/css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}codemirror/lib/codemirror.css" type="text/css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}codemirror/theme/elegant.css" type="text/css">
     <style>
       .CodeMirror-scroll {
         height: auto;
@@ -14,24 +13,44 @@
       .CodeMirror-wrap {
         margin-top: 5px;
       }
+      #col1, #col2 {
+      }
+      #col1 {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        overflow-y: auto;
+        left: 0;
+        right: 60%;
+        padding: 8px;
+      }
+      #col2 {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        overflow-y: auto;
+        left: 40%;
+        right: 0;
+        padding: 8px;
+      }
     </style>
   </head>
   <body>
-    <div class="navbar navbar-fixed-bottom">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="brand" href="#">Django Inspector</a>
-          <ul class="nav">
-            <li class="active"><a href="#">URLs</a></li>
-            <li><a href="#">Apps</a></li>
-            <li><a href="#">Models</a></li>
-            <li><a href="#">Tags/Filters</a></li>
-            <li><a href="#">Settings</a></li>
-          </ul>
+    <div>
+      <div id="col1">
+        <ul class="nav nav-pills nav-stacked" id="urlpatterns"></ul>
+      </div>
+      <div id="col2">
+        <div id="viewpanel">
+          <h2 id="viewname"></h2>
+          <p id="modulename"></p>
+          <p><a id="filename" href="#"></a></p>
         </div>
+        <textarea cols="80" rows="10" id="viewcode"></textarea>
       </div>
     </div>
 
+    {% comment %}
     <div class="container-fluid">
       <div class="row-fluid">
         <div class="span6">
@@ -41,6 +60,7 @@
         <div class="span6">
           <!--Body content-->
           <div id="viewpanel">
+            <div id="modulename"></div>
             <h3 id="viewname"></h3>
             <code><a id="filename" href="#"></a></code>
           </div>
@@ -48,13 +68,14 @@
         </div>
       </div>
     </div>
+    {% endcomment %}
 
-    <script src="{% static 'js/jquery-1.7.2.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/underscore.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/backbone.js' %}" type="text/javascript"></script>
-    <script src="{% static 'bootstrap/js/bootstrap.js' %}" type="text/javascript"></script>
-    <script src="{% static 'codemirror/lib/codemirror.js' %}"></script>
-    <script src="{% static 'codemirror/mode/python/python.js' %}"></script>
+    <script src="{{ STATIC_URL }}js/jquery-1.7.2.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/underscore.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/backbone.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}codemirror/lib/codemirror.js"></script>
+    <script src="{{ STATIC_URL }}codemirror/mode/python/python.js"></script>
     <script type="text/javascript">
       window.App = {};
       _.extend(App, Backbone.Events);
@@ -81,14 +102,19 @@
 
       var URLPattern = Backbone.Model.extend({
         initialize: function() {
-          //console.log('URLPattern created')
         }
       });
       var URLPatterns = Backbone.Collection.extend({
         model: URLPattern,
         url: 'urlpatterns/'
       });
-
+      var DjangoView = Backbone.Model.extend({
+        initialize: function() {
+        },
+        urlRoot: function () {
+          return 'views/' + this.get('modulePath') + '/' + this.get('viewName') + '/';
+        }
+      });
 
       /* Views */
 
@@ -100,7 +126,12 @@
         },
         render: function() {
           var ul = $(this.options.parent);
-          $(this.el).html('<a href="#"><code>' + this.model.toJSON().pattern.regex + '</code></a>');
+          var regex = this.model.get('pattern').regex;
+          var prefix = this.model.get('prefix');
+          if (prefix) {
+            regex = prefix + regex;
+          }
+          $(this.el).html('<a href="#">' + this.model.toJSON().pattern.regex + '</a>');
           ul.append(this.el);
           return this;
         },
@@ -155,14 +186,18 @@
           });
         },
         render: function() {
+          var view = this;
           var pattern = App.selectedPattern.get('pattern');
-          var view =  App.selectedPattern.get('view');
-          this.$('#viewname').html(view.name);
-          this.$('#filename').attr('href', 'mvim://open?url=file://' + view.file + '&line=' + view.line_number);
-          this.$('#filename').text(view.file);
-
-          App.editor.setValue(view.source);
-          App.editor.setOption('firstLineNumber', view.line_number);
+          this.$('#modulename').html(pattern.view_module);
+          this.$('#viewname').html(pattern.view_name);
+          var djangoView = new DjangoView({modulePath: pattern.view_module, viewName: pattern.view_name});
+          djangoView.fetch({success: function (model, response) {
+            var attributes = model.toJSON();
+            view.$('#filename').attr('href', 'mvim://open?url=file://' + attributes.file + '&line=' + attributes.line_number);
+            view.$('#filename').text(attributes.file);
+            App.editor.setValue(attributes.source);
+            App.editor.setOption('firstLineNumber', attributes.line_number);
+          }});
         }
       });
 
