@@ -1,7 +1,7 @@
 import json
 from django import http
 from django.shortcuts import render
-import urlviz
+from inspector import urlviz
 
 
 def index(request):
