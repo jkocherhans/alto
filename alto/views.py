@@ -1,11 +1,11 @@
 import json
 from django import http
 from django.shortcuts import render
-from inspector import urlviz
+from alto import urlviz
 
 
 def index(request):
-    return render(request, 'inspector/index.html', {})
+    return render(request, 'alto/index.html', {})
 
 def url_patterns(request):
     patterns = urlviz.inspect_urlpatterns()

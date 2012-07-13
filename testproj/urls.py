@@ -33,5 +33,5 @@ urlpatterns = patterns('',
     url(r'redirect-view/$', RedirectView.as_view(url='/')),
     url(r'template-view/$', TemplateView.as_view(template_name='500.html')),
 
-    url(r'__inspector/', include('inspector.urls')),
+    url(r'_alto/', include('alto.urls')),
 )

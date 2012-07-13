@@ -2,7 +2,7 @@ DEBUG = True
 ROOT_URLCONF = 'testproj.urls'
 
 INSTALLED_APPS = [
-    'inspector',
+    'alto',
     'django.contrib.staticfiles',
 ]
 
