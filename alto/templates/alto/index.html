@@ -135,7 +135,8 @@
           ul.append(this.el);
           return this;
         },
-        selectPattern: function() {
+        selectPattern: function(e) {
+          e.preventDefault();
           $(this.el).toggleClass('active');
           App.selectedPattern = this.model;
           App.trigger('selectedPatternChanged', 'testing');
