@@ -1,11 +1,13 @@
 import json
 from django import http
+from django.conf import settings
 from django.shortcuts import render
 from alto import urlviz
 
 
 def index(request):
-    return render(request, 'alto/index.html', {})
+    url_scheme = getattr(settings, 'ALTO_URL_SCHEME', 'mvim')
+    return render(request, 'alto/index.html', {'url_scheme': url_scheme})
 
 def url_patterns(request):
     patterns = urlviz.inspect_urlpatterns()

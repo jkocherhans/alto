@@ -193,7 +193,7 @@
           var djangoView = new DjangoView({modulePath: pattern.view_module, viewName: pattern.view_name});
           djangoView.fetch({success: function (model, response) {
             var attributes = model.toJSON();
-            view.$('#filename').attr('href', 'mvim://open?url=file://' + attributes.file + '&line=' + attributes.line_number);
+            view.$('#filename').attr('href', '{{ url_scheme }}://open?url=file://' + attributes.file + '&line=' + attributes.line_number);
             view.$('#filename').text(attributes.file);
             App.editor.setValue(attributes.source);
             App.editor.setOption('firstLineNumber', attributes.line_number);
