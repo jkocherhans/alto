@@ -1,0 +1,4 @@
+include README.rst
+recursive-include alto/static *
+recursive-include alto/templates *
+global-exclude *.pyc .DS_Store
