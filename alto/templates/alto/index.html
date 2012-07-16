@@ -126,17 +126,18 @@
         },
         render: function() {
           var ul = $(this.options.parent);
-          var regex = this.model.get('pattern').regex;
-          var prefix = this.model.get('prefix');
-          if (prefix) {
-            regex = prefix + regex;
+          var pattern = this.model.get('pattern');
+          var regex = pattern.regex;
+          if (pattern.prefix) {
+            regex = pattern.prefix + pattern.regex;
           }
-          $(this.el).html('<a href="#">' + this.model.toJSON().pattern.regex + '</a>');
+          $(this.el).html('<a href="#">' + regex + '</a>');
           ul.append(this.el);
           return this;
         },
         selectPattern: function(e) {
           e.preventDefault();
+          console.log(this.model.toJSON());
           $(this.el).toggleClass('active');
           App.selectedPattern = this.model;
           App.trigger('selectedPatternChanged', 'testing');
