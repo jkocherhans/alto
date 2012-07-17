@@ -13,6 +13,7 @@ setup(
     license='BSD',
     url='http://github.com/jkocherhans/alto',
     packages = ['alto'],
+    include_package_data = True,
     classifiers = [
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Web Environment',
