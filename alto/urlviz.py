@@ -19,6 +19,12 @@ def extract_view(view, decorators=None):
         for closure in view.func_closure:
             if callable(closure.cell_contents):
                 return extract_view(closure.cell_contents, decorators)
+    if inspect.isfunction(view) or inspect.ismethod(view):
+        pass
+    elif inspect.isclass(view):
+        pass
+    else:
+        view = view.__class__
     return view, decorators
 
 def get_decorators(func):
@@ -77,14 +83,6 @@ def inspect_pattern(pattern, prefix=None):
     capture_groups = parse_capture_groups(pattern.regex.pattern)
     view, decorators = extract_view(pattern.callback)
     module = inspect.getmodule(view)
-
-    if inspect.isfunction(view) or inspect.ismethod(view):
-        pass
-    elif inspect.isclass(view):
-        pass
-    else:
-        view = view.__class__
-
     return {
         'view_module': module.__name__,
         'view_name': view.__name__,

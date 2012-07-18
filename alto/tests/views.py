@@ -8,3 +8,8 @@ def basic_view(request):
 def decorated_view(request):
     """This is a decorated function view."""
     pass
+
+class ClassView(object):
+    """This is a basic class view."""
+    def __call__(request):
+        pass

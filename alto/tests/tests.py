@@ -4,7 +4,8 @@ from alto.tests import views
 
 class FunctionTest(unittest.TestCase):
     def test_basic_view(self):
-        data = urlviz.inspect_view(views.basic_view)
+        view, decorators = urlviz.extract_view(views.basic_view)
+        data = urlviz.inspect_view(view)
         self.assertEqual(data['name'], 'basic_view')
         self.assertEqual(data['doc'], 'This is a basic test view.')
         self.assertTrue(data['file'].endswith('alto/tests/views.py'))
@@ -19,4 +20,12 @@ class DecoratedFunctionTest(unittest.TestCase):
         data = urlviz.inspect_view(view)
         self.assertEqual(data['name'], 'decorated_view')
         self.assertEqual(data['doc'], 'This is a decorated function view.')
+        self.assertTrue(data['file'].endswith('alto/tests/views.py'))
+
+class ClassTest(unittest.TestCase):
+    def test_class_view(self):
+        view, decorators = urlviz.extract_view(views.ClassView())
+        data = urlviz.inspect_view(view)
+        self.assertEqual(data['name'], 'ClassView')
+        self.assertEqual(data['doc'], 'This is a basic class view.')
         self.assertTrue(data['file'].endswith('alto/tests/views.py'))
