@@ -4,7 +4,6 @@ import json
 import re
 from django.conf import settings
 from django.core import urlresolvers
-from django.views.generic import View
 
 
 # URLs ########################################################################
@@ -18,13 +17,6 @@ def get_resolver_data(resolver, prefix=None):
             patterns.extend(get_resolver_data(pattern, prefix=prefix))
         elif isinstance(pattern, urlresolvers.RegexURLPattern):
             view, decorators = extract_view(pattern.callback)
-            if inspect.isclass(view) and issubclass(view, View):
-                view = view.dispatch
-            elif inspect.isfunction(view) or inspect.ismethod(view):
-                pass
-            else:
-                view = view.__call__
-            argspec = inspect.getargspec(view)
             pattern_data = inspect_pattern(pattern, prefix=prefix)
             patterns.append({'pattern': pattern_data})#, 'view': view_data})
         else:
@@ -41,7 +33,6 @@ def inspect_urlpatterns():
 
 
 def inspect_pattern(pattern, prefix=None):
-    capture_groups = parse_capture_groups(pattern.regex.pattern)
     view, decorators = extract_view(pattern.callback)
     module = inspect.getmodule(view)
     return {
