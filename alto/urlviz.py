@@ -7,6 +7,89 @@ from django.core import urlresolvers
 from django.views.generic import View
 
 
+# URLs ########################################################################
+
+def get_resolver_data(resolver, prefix=None):
+    patterns = []
+    resolver_prefix = getattr(getattr(resolver, 'regex'), 'pattern')
+    prefix = prefix + resolver_prefix if prefix else resolver_prefix
+    for pattern in resolver.url_patterns:
+        if isinstance(pattern, urlresolvers.RegexURLResolver):
+            patterns.extend(get_resolver_data(pattern, prefix=prefix))
+        elif isinstance(pattern, urlresolvers.RegexURLPattern):
+            view, decorators = extract_view(pattern.callback)
+            if inspect.isclass(view) and issubclass(view, View):
+                view = view.dispatch
+            elif inspect.isfunction(view) or inspect.ismethod(view):
+                pass
+            else:
+                view = view.__call__
+            argspec = inspect.getargspec(view)
+            pattern_data = inspect_pattern(pattern, prefix=prefix)
+            patterns.append({'pattern': pattern_data})#, 'view': view_data})
+        else:
+            print pattern
+            raise Exception('unknown object')
+    return patterns
+
+def inspect_urlpatterns():
+    # This can't map out a url conf that is set on the request by middleware.
+    urlconf = settings.ROOT_URLCONF
+    urlresolvers.set_urlconf(urlconf)
+    resolver = urlresolvers.RegexURLResolver(r'', urlconf)
+    return get_resolver_data(resolver)
+
+
+def inspect_pattern(pattern, prefix=None):
+    capture_groups = parse_capture_groups(pattern.regex.pattern)
+    view, decorators = extract_view(pattern.callback)
+    module = inspect.getmodule(view)
+    return {
+        'view_module': module.__name__,
+        'view_name': view.__name__,
+        'prefix': prefix,
+        'regex': pattern.regex.pattern,
+        'name': pattern.name,
+        'default_args': pattern.default_args,
+        'capture_groups': parse_capture_groups(pattern.regex.pattern)
+    }
+
+
+def parse_capture_groups(regex):
+    capture_groups = []
+    capture_group_re = re.compile(r'(\([^\)]+\))')
+    name_re = re.compile(r'\?P<([^>]+)>')
+    for pattern in capture_group_re.findall(regex):
+        m = name_re.search(pattern)
+        if m is None:
+            name = None
+        else:
+            name = m.group(1)
+        capture_groups.append({'name': name, 'pattern': pattern})
+    return capture_groups
+
+
+# Views #######################################################################
+
+def load_view(module_path, view_name):
+    import importlib
+    module = importlib.import_module(module_path)
+    return getattr(module, view_name)
+
+def inspect_view(view):
+    source_lines, line_number = inspect.getsourcelines(view)
+    data = {
+        'file': inspect.getsourcefile(view),
+        'name': view.__name__,
+        'source': inspect.getsource(view),
+        'sourcelines': source_lines,
+        'line_number': line_number,
+        'doc': inspect.getdoc(view),
+        #'decorators': [inspect_decorator(d) for d in get_decorators(view)],
+        #'args': inspect_args(view),
+    }
+    return data
+
 def extract_view(view, decorators=None):
     """
     Extract a view object out of any wrapping decorators.
@@ -26,6 +109,19 @@ def extract_view(view, decorators=None):
     else:
         view = view.__class__
     return view, decorators
+
+def inspect_args(func):
+    argspec = inspect.getargspec(func)
+    return {
+        'format': inspect.formatargspec(argspec.args, argspec.varargs, argspec.keywords, argspec.defaults),
+        'args': argspec.args,
+        'keywords': argspec.keywords,
+        'defaults': argspec.defaults,
+        'varargs': argspec.varargs,
+    }
+
+
+# Decorators ##################################################################
 
 def get_decorators(func):
     """
@@ -56,91 +152,6 @@ def inspect_decorator(decorator):
         'args': inspect_args(decorator),
     }
 
-def inspect_args(func):
-    argspec = inspect.getargspec(func)
-    return {
-        'format': inspect.formatargspec(argspec.args, argspec.varargs, argspec.keywords, argspec.defaults),
-        'args': argspec.args,
-        'keywords': argspec.keywords,
-        'defaults': argspec.defaults,
-        'varargs': argspec.varargs,
-    }
-
-def parse_capture_groups(regex):
-    capture_groups = []
-    capture_group_re = re.compile(r'(\([^\)]+\))')
-    name_re = re.compile(r'\?P<([^>]+)>')
-    for pattern in capture_group_re.findall(regex):
-        m = name_re.search(pattern)
-        if m is None:
-            name = None
-        else:
-            name = m.group(1)
-        capture_groups.append({'name': name, 'pattern': pattern})
-    return capture_groups
-
-def inspect_pattern(pattern, prefix=None):
-    capture_groups = parse_capture_groups(pattern.regex.pattern)
-    view, decorators = extract_view(pattern.callback)
-    module = inspect.getmodule(view)
-    return {
-        'view_module': module.__name__,
-        'view_name': view.__name__,
-        'prefix': prefix,
-        'regex': pattern.regex.pattern,
-        'name': pattern.name,
-        'default_args': pattern.default_args,
-        'capture_groups': parse_capture_groups(pattern.regex.pattern)
-    }
-
-def load_view(module_path, view_name):
-    import importlib
-    module = importlib.import_module(module_path)
-    return getattr(module, view_name)
-
-def inspect_view(view):
-    source_lines, line_number = inspect.getsourcelines(view)
-    data = {
-        'file': inspect.getsourcefile(view),
-        'name': view.__name__,
-        'source': inspect.getsource(view),
-        'sourcelines': source_lines,
-        'line_number': line_number,
-        'doc': inspect.getdoc(view),
-        #'decorators': [inspect_decorator(d) for d in get_decorators(view)],
-        #'args': inspect_args(view),
-    }
-    return data
-
-def inspect_urlpatterns():
-    # This can't map out a url conf that is set on the request by middleware.
-    urlconf = settings.ROOT_URLCONF
-    urlresolvers.set_urlconf(urlconf)
-    resolver = urlresolvers.RegexURLResolver(r'', urlconf)
-    return get_resolver_data(resolver)
-
-def get_resolver_data(resolver, prefix=None):
-    patterns = []
-    resolver_prefix = getattr(getattr(resolver, 'regex'), 'pattern')
-    prefix = prefix + resolver_prefix if prefix else resolver_prefix
-    for pattern in resolver.url_patterns:
-        if isinstance(pattern, urlresolvers.RegexURLResolver):
-            patterns.extend(get_resolver_data(pattern, prefix=prefix))
-        elif isinstance(pattern, urlresolvers.RegexURLPattern):
-            view, decorators = extract_view(pattern.callback)
-            if inspect.isclass(view) and issubclass(view, View):
-                view = view.dispatch
-            elif inspect.isfunction(view) or inspect.ismethod(view):
-                pass
-            else:
-                view = view.__call__
-            argspec = inspect.getargspec(view)
-            pattern_data = inspect_pattern(pattern, prefix=prefix)
-            patterns.append({'pattern': pattern_data})#, 'view': view_data})
-        else:
-            print pattern
-            raise Exception('unknown object')
-    return patterns
 
 if __name__ == '__main__':
     patterns = inspect_urlpatterns()
