@@ -1,3 +1,9 @@
+Release 0.2 (2012-07-23)
+========================
+
+Added support for fuzzy search and keyboard navigation of url patterns.
+
+
 Release 0.1.1 (2012-07-17)
 ==========================
 
