@@ -238,11 +238,35 @@
 
         $('#search').focus();
         $('#searchform').bind('keyup', function (e) {
-            // var query = $('#search').val();
-            // console.log(query);
+            if (e.keyCode == 38 || e.keyCode == 40) {
+            } else {
+              urlPatternListView.render();
+              $('#urlpatterns').children('li.urlpattern').first().click();
+            }
+        });
+        $('body').bind('keyup', function (e) {
+          if (e.keyCode == 27) {
+            $('#search').val('').focus();
             urlPatternListView.render();
-
-
+          } else if (e.keyCode == 38) {
+            // Up arrow
+            if (App.selectedPattern != null) {
+              var activeElement = $('li.active');
+              var nextElement = activeElement.prev('li.urlpattern');
+              nextElement.click();
+            } else {
+              $('#urlpatterns').children('li.urlpattern').first().click();
+            }
+          } else if (e.keyCode == 40) {
+            // Down arrow
+            if (App.selectedPattern != null) {
+              var activeElement = $('li.active');
+              var nextElement = activeElement.next('li.urlpattern');
+              nextElement.click();
+            } else {
+              $('#urlpatterns').children('li.urlpattern').first().click();
+            }
+          }
         });
       });
 
