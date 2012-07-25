@@ -19,10 +19,9 @@ def get_resolver_data(resolver, prefix=None):
         elif isinstance(pattern, urlresolvers.RegexURLPattern):
             view, decorators = extract_view(pattern.callback)
             pattern_data = inspect_pattern(pattern, prefix=prefix)
-            patterns.append({'pattern': pattern_data})#, 'view': view_data})
+            patterns.append(pattern_data)
         else:
-            print pattern
-            raise Exception('unknown object')
+            raise Exception('Unknown object: %s', pattern)
     return patterns
 
 def inspect_urlpatterns():

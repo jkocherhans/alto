@@ -118,7 +118,7 @@
         },
         render: function() {
           var ul = $(this.options.parent);
-          var pattern = this.model.get('pattern');
+          var pattern = this.model.toJSON();
           var regex = pattern.annotated_pattern;
           $(this.el).html('<a href="#">' + regex + '</a>');
           ul.append(this.el);
@@ -156,7 +156,7 @@
           var i = 1.0;
           this.collection.each(function (pattern) {
             if (query) {
-              var candidate = pattern.get('pattern').normalized_pattern;
+              var candidate = pattern.get('normalized_pattern');
               var score = LiquidMetal.score(candidate, query);
               if (score > 0) {
                 results.push([score, pattern]);
@@ -200,7 +200,7 @@
         },
         render: function() {
           var view = this;
-          var pattern = App.selectedPattern.get('pattern');
+          var pattern = App.selectedPattern.toJSON();
           this.$('#modulename').html(pattern.view_module);
           this.$('#viewname').html(pattern.view_name);
           this.$('#regex').html(pattern.raw_pattern);
