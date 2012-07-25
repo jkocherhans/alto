@@ -4,6 +4,7 @@ import json
 import re
 from django.conf import settings
 from django.core import urlresolvers
+from django.utils import regex_helper
 
 
 # URLs ########################################################################
@@ -31,10 +32,37 @@ def inspect_urlpatterns():
     resolver = urlresolvers.RegexURLResolver(r'', urlconf)
     return get_resolver_data(resolver)
 
-
 def inspect_pattern(pattern, prefix=None):
     view, decorators = extract_view(pattern.callback)
     module = inspect.getmodule(view)
+
+    if inspect.isfunction(view):
+        argspec = inspect.getargspec(view)
+    else:
+        argspec = None
+
+    annotations = {}
+    group_names = {}
+    normalized_pattern, groups = regex_helper.normalize(pattern.regex.pattern)[0]
+    for group in groups:
+        try:
+            group_number = int(group.strip('_'))
+        except ValueError:
+            group_number = None
+        if argspec is not None and group_number is not None:
+            try:
+                group_name = argspec[0][group_number + 1]
+            except IndexError:
+                group_name = group
+        else:
+            group_name = group
+        annotations[group] = '<span class="capturegroup">&lt;%s&gt;</span>' % group_name
+        group_names[group] = group_name
+
+    prefix = prefix or ''
+    annotated_pattern = prefix + normalized_pattern % annotations
+    normalized_pattern = prefix + normalized_pattern % group_names
+
     return {
         'view_module': module.__name__,
         'view_name': view.__name__,
@@ -42,9 +70,10 @@ def inspect_pattern(pattern, prefix=None):
         'regex': pattern.regex.pattern,
         'name': pattern.name,
         'default_args': pattern.default_args,
-        'capture_groups': parse_capture_groups(pattern.regex.pattern)
+        'annotated_pattern': annotated_pattern,
+        'normalized_pattern': normalized_pattern,
+        'raw_pattern': prefix + pattern.regex.pattern,
     }
-
 
 def parse_capture_groups(regex):
     capture_groups = []

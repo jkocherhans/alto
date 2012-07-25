@@ -37,6 +37,9 @@
         width: 95%;
         margin: 10px;
       }
+      .capturegroup {
+        color: red;
+      }
     </style>
   </head>
   <body>
@@ -51,6 +54,7 @@
         <div id="viewpanel">
           <h2 id="viewname"></h2>
           <p id="modulename"></p>
+          <code id="regex"></code>
           <p><a id="filename" href="#"></a></p>
         </div>
         <textarea cols="80" rows="10" id="viewcode"></textarea>
@@ -115,10 +119,7 @@
         render: function() {
           var ul = $(this.options.parent);
           var pattern = this.model.get('pattern');
-          var regex = pattern.regex;
-          if (pattern.prefix) {
-            regex = pattern.prefix + pattern.regex;
-          }
+          var regex = pattern.annotated_pattern;
           $(this.el).html('<a href="#">' + regex + '</a>');
           ul.append(this.el);
           return this;
@@ -155,10 +156,7 @@
           var i = 1.0;
           this.collection.each(function (pattern) {
             if (query) {
-              var candidate = pattern.get('pattern').regex;
-              if (pattern.get('pattern').prefix) {
-                candidate = pattern.get('pattern').prefix + pattern.regex;
-              }
+              var candidate = pattern.get('pattern').normalized_pattern;
               var score = LiquidMetal.score(candidate, query);
               if (score > 0) {
                 results.push([score, pattern]);
@@ -205,6 +203,7 @@
           var pattern = App.selectedPattern.get('pattern');
           this.$('#modulename').html(pattern.view_module);
           this.$('#viewname').html(pattern.view_name);
+          this.$('#regex').html(pattern.raw_pattern);
           var djangoView = new DjangoView({modulePath: pattern.view_module, viewName: pattern.view_name});
           djangoView.fetch({success: function (model, response) {
             var attributes = model.toJSON();

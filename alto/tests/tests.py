@@ -19,11 +19,10 @@ class BasicPatternTest(unittest.TestCase):
     def test_inspect_pattern(self):
         data = urlviz.inspect_pattern(self.pattern)
         self.assertEqual(data['regex'], r'^test/$')
-        self.assertEqual(data['capture_groups'], [])
         self.assertEqual(data['name'], None)
         self.assertEqual(data['view_module'], 'alto.tests.views')
         self.assertEqual(data['view_name'], 'basic_view')
-        self.assertEqual(data['prefix'], None)
+        self.assertEqual(data['prefix'], '')
         self.assertEqual(data['default_args'], {})
 
 class BasicStringPatternTest(unittest.TestCase):
@@ -60,6 +59,23 @@ class BasicDefaultArgsPatternTest(unittest.TestCase):
     def test_inspect_pattern(self):
         data = urlviz.inspect_pattern(self.pattern)
         self.assertEqual(data['default_args'], self.args)
+
+class BasicCaptureGrouptest(unittest.TestCase):
+    def test_positional_arg(self):
+        pattern = RegexURLPattern(r'^positional/(\d+)/$', views.single_positional_arg)
+        data = urlviz.inspect_pattern(pattern)
+        self.assertEqual(data['annotated_pattern'],
+            'positional/<span class="capturegroup">&lt;id&gt;</span>/')
+        self.assertEqual(data['normalized_pattern'], 'positional/id/')
+        self.assertEqual(data['raw_pattern'], r'^positional/(\d+)/$')
+
+    def test_keyword_arg(self):
+        pattern = RegexURLPattern(r'^keyword/(?P<slug>\w+)/$', views.single_keyword_arg)
+        data = urlviz.inspect_pattern(pattern)
+        self.assertEqual(data['annotated_pattern'],
+            'keyword/<span class="capturegroup">&lt;slug&gt;</span>/')
+        self.assertEqual(data['normalized_pattern'], 'keyword/slug/')
+        self.assertEqual(data['raw_pattern'], r'^keyword/(?P<slug>\w+)/$')
 
 
 # Views #######################################################################
