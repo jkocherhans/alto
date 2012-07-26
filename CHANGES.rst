@@ -1,3 +1,9 @@
+Release 0.2.1 (2012-07-26)
+========================
+
+Added highlighting of capture groups.
+
+
 Release 0.2 (2012-07-23)
 ========================
 

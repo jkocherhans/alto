@@ -5,7 +5,7 @@ README = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 
 setup(
     name = 'alto',
-    version = '0.2',
+    version = '0.2.1',
     description = 'A high-level code browser for Django projects.',
     long_description = README,
     author = 'Joseph Kocherhans',
