@@ -32,6 +32,7 @@ def inspect_urlpatterns():
     return get_resolver_data(resolver)
 
 def inspect_pattern(pattern, prefix=None):
+    prefix = prefix or ''
     view, decorators = extract_view(pattern.callback)
     module = inspect.getmodule(view)
 
@@ -42,7 +43,7 @@ def inspect_pattern(pattern, prefix=None):
 
     annotations = {}
     group_names = {}
-    normalized_pattern, groups = regex_helper.normalize(pattern.regex.pattern)[0]
+    normalized_pattern, groups = regex_helper.normalize(prefix + pattern.regex.pattern)[0]
     for group in groups:
         try:
             group_number = int(group.strip('_'))
@@ -58,10 +59,6 @@ def inspect_pattern(pattern, prefix=None):
         annotations[group] = '<span class="capturegroup">&lt;%s&gt;</span>' % group_name
         group_names[group] = group_name
 
-    prefix = prefix or ''
-    annotated_pattern = prefix + normalized_pattern % annotations
-    normalized_pattern = prefix + normalized_pattern % group_names
-
     return {
         'view_module': module.__name__,
         'view_name': view.__name__,
@@ -69,8 +66,8 @@ def inspect_pattern(pattern, prefix=None):
         'regex': pattern.regex.pattern,
         'name': pattern.name,
         'default_args': pattern.default_args,
-        'annotated_pattern': annotated_pattern,
-        'normalized_pattern': normalized_pattern,
+        'annotated_pattern': normalized_pattern % annotations,
+        'normalized_pattern': normalized_pattern % group_names,
         'raw_pattern': prefix + pattern.regex.pattern,
     }
 
