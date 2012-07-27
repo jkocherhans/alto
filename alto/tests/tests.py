@@ -60,7 +60,7 @@ class BasicDefaultArgsPatternTest(unittest.TestCase):
         data = urlviz.inspect_pattern(self.pattern)
         self.assertEqual(data['default_args'], self.args)
 
-class BasicCaptureGrouptest(unittest.TestCase):
+class BasicCaptureGroupTest(unittest.TestCase):
     def test_positional_arg(self):
         pattern = RegexURLPattern(r'^positional/(\d+)/$', views.single_positional_arg)
         data = urlviz.inspect_pattern(pattern)
@@ -77,6 +77,10 @@ class BasicCaptureGrouptest(unittest.TestCase):
         self.assertEqual(data['normalized_pattern'], 'keyword/slug/')
         self.assertEqual(data['raw_pattern'], r'^keyword/(?P<slug>\w+)/$')
 
+class ResolverTest(unittest.TestCase):
+    def test_settings_resolver(self):
+        data = urlviz.inspect_urlpatterns()
+        self.assertEqual(len(data), 2)
 
 # Views #######################################################################
 
