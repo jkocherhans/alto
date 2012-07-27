@@ -77,6 +77,13 @@ class BasicCaptureGroupTest(unittest.TestCase):
         self.assertEqual(data['normalized_pattern'], 'keyword/slug/')
         self.assertEqual(data['raw_pattern'], r'^keyword/(?P<slug>\w+)/$')
 
+class IncludedPatternTest(unittest.TestCase):
+    def test_included_pattern(self):
+        p = urlviz.inspect_urlpatterns()[2]
+        self.assertEqual(p['raw_pattern'], '^testapp/basic_view/$')
+        self.assertEqual(p['normalized_pattern'], 'testapp/basic_view/')
+        self.assertEqual(p['annotated_pattern'], 'testapp/basic_view/')
+
 class ResolverTest(unittest.TestCase):
     def test_settings_resolver(self):
         data = urlviz.inspect_urlpatterns()
