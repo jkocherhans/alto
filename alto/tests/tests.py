@@ -80,7 +80,7 @@ class BasicCaptureGroupTest(unittest.TestCase):
 class ResolverTest(unittest.TestCase):
     def test_settings_resolver(self):
         data = urlviz.inspect_urlpatterns()
-        self.assertEqual(len(data), 2)
+        self.assertEqual(len(data), 4)
 
 # Views #######################################################################
 
