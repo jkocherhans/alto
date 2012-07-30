@@ -1,3 +1,9 @@
+Release 0.2.2 (2012-07-30)
+========================
+
+Added view and module names to search results so you can also search by view.
+
+
 Release 0.2.1 (2012-07-26)
 ========================
 
