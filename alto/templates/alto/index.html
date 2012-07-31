@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>alto</title>
     <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="{{ STATIC_URL }}codemirror/lib/codemirror.css" type="text/css">
     <link rel="stylesheet" href="{{ STATIC_URL }}codemirror/theme/elegant.css" type="text/css">
@@ -46,7 +47,7 @@
     <div>
       <div id="col1">
         <form id="searchform">
-            <input type="text" name="search" id="search">
+            <input type="text" name="q" id="search" value="{{ query }}">
         </form>
         <ul class="nav nav-pills nav-stacked" id="urlpatterns"></ul>
       </div>
@@ -155,7 +156,7 @@
           var i = 1.0;
           this.collection.each(function (pattern) {
             if (query) {
-              var candidate = pattern.get('normalized_pattern') + ' ' + pattern.get('view_module') + ' ' + pattern.get('view_name');
+              var candidate = pattern.get('normalized_pattern') + ' ' + pattern.get('view_module') + '.' + pattern.get('view_name');
               var score = LiquidMetal.score(candidate, query);
               if (score > 0) {
                 results.push([score, pattern]);

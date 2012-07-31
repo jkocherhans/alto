@@ -7,7 +7,11 @@ from alto import urlviz
 
 def index(request):
     url_scheme = getattr(settings, 'ALTO_URL_SCHEME', 'mvim')
-    return render(request, 'alto/index.html', {'url_scheme': url_scheme})
+    query = request.GET.get('q', '')
+    return render(request, 'alto/index.html', {
+        'url_scheme': url_scheme,
+        'query': query,
+    })
 
 def url_patterns(request):
     patterns = urlviz.inspect_urlpatterns()
