@@ -4,3 +4,5 @@
 *.egg-info
 dist
 docs/_build
+.tags
+.tags_sorted_by_file
