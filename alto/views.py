@@ -3,6 +3,7 @@ from django import http
 from django.conf import settings
 from django.shortcuts import render
 from alto import urlviz
+from alto.templates import find_templates
 
 
 def index(request):
@@ -21,4 +22,8 @@ def view_detail(request, module_path, view_name):
     view = urlviz.load_view(module_path, view_name)
     view, decorators = urlviz.extract_view(view)
     data = urlviz.inspect_view(view)
+    return http.HttpResponse(json.dumps(data, sort_keys=True, indent=2))
+
+def templates(request):
+    data = list(find_templates())
     return http.HttpResponse(json.dumps(data, sort_keys=True, indent=2))
