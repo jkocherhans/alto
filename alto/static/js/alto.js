@@ -1,6 +1,5 @@
 window.App = {};
 _.extend(App, Backbone.Events);
-App.selectedPattern = null;
 
 
 /* Router */
@@ -22,12 +21,25 @@ var Workspace = Backbone.Router.extend({
 /* Models */
 
 var URLPattern = Backbone.Model.extend({
-    initialize: function() {}
+    initialize: function() {},
+    getSearchString: function() {
+        return this.get('normalized_pattern') + ' ' + this.get('view_module') + '.' + this.get('view_name');
+    },
+    getTitle: function() {
+        return this.get('annotated_pattern');
+    },
+    getSecondary: function() {
+        var modulePath = this.get('view_module');
+        var viewName = this.get('view_name');
+        return modulePath + '.' + viewName;
+    }
 });
+
 var URLPatterns = Backbone.Collection.extend({
     model: URLPattern,
     url: 'urlpatterns/'
 });
+
 var DjangoView = Backbone.Model.extend({
     initialize: function() {},
     urlRoot: function () {
@@ -35,86 +47,132 @@ var DjangoView = Backbone.Model.extend({
     }
 });
 
-/* Views */
-
-var URLPatternRow = Backbone.View.extend({
-    tagName: 'li',
-    className: 'urlpattern',
-    events: {
-        'click': 'selectPattern'
+var TemplatePath = Backbone.Model.extend({
+    initialize: function() {},
+    getSearchString: function() {
+        return this.get('name');
     },
-    render: function() {
-        var ul = $(this.options.parent);
-        var pattern = this.model.toJSON();
-        var regex = pattern.annotated_pattern;
-        $(this.el).html('<a href="#">' + regex + '<br>' + pattern.view_module + '.' + pattern.view_name +' </a>');
-        ul.append(this.el);
-        return this;
+    getTitle: function() {
+        return this.get('name');
     },
-    selectPattern: function(e) {
-        e.preventDefault();
-        $(this.el).toggleClass('active');
-        App.selectedPattern = this.model;
-        App.trigger('selectedPatternChanged', 'testing');
+    getSecondary: function() {
+        return '';
     }
 });
 
-var URLPatternListView = Backbone.View.extend({
+var TemplatePaths = Backbone.Collection.extend({
+    model: TemplatePath,
+    url: 'templates/'
+});
+
+
+/* Views */
+
+var SearchRow = Backbone.View.extend({
+    tagName: 'li',
     events: {
-        'click li': 'selectPattern'
+        'click': 'select'
     },
     initialize: function() {
-        var view = this;
-        this.activeView = null;
-        this._patternViews = [];
+    },
+    render: function() {
+        var ul = $(this.options.parent);
+        var main = this.model.getTitle();
+        var secondary = this.model.getSecondary();
+        $(this.el).html('<a href="#">' + main + '<br>' + secondary +' </a>');
+        ul.append(this.el);
+        return this;
+    },
+    select: function(e) {
+        e.preventDefault();
+        App.trigger('selectedRowChanged', this);
+    }
+});
+
+var SearchList = Backbone.View.extend({
+    initialize: function() {
+        this.selectedRow = null;
+        this.searchRows = [];
+        // Bind the collection's change method to trigger this view's render method.
+        // _.bindAll is required so 'this' is correct.
+        // Is there a cleaner way to do this?
         _.bindAll(this, 'render');
         this.collection.bind('reset', this.render);
+
+        _.bindAll(this, 'selectedRowChanged');
+        App.bind('selectedRowChanged', this.selectedRowChanged);
     },
     render: function() {
         var view = this;
         var ul = this.$el;
         this.$el.html('');
-
-        // Sort/filter the collection if needed
-        var results = [];
-        var query = $('#search').val();
-
-        var i = 1.0;
-        this.collection.each(function (pattern) {
-            if (query) {
-                var candidate = pattern.get('normalized_pattern') + ' ' + pattern.get('view_module') + '.' + pattern.get('view_name');
-                var score = LiquidMetal.score(candidate, query);
-                if (score > 0) {
-                    results.push([score, pattern]);
-                }
-            } else {
-                results.push([-i, pattern]);
-                i = i + 1.0;
-            }
-        });
-
-        results = results.sort(function (a, b) { return b[0] - a[0]; });
-
+        var results = this.getSearchResults();
+        view.searchRows = [];
         _.each(results, function(result) {
-            var pattern = result[1];
-            var subView = new URLPatternRow({parent: ul, model: pattern});
-            view._patternViews.push(subView);
-            subView.render();
+            var model = result[1];
+            var searchRow = new SearchRow({parent: ul, model: model});
+            view.searchRows.push(searchRow);
+            searchRow.render();
         });
         return this;
     },
-    selectPattern: function(e) {
-        $(this.activeElement).removeClass('active');
-        this.activeElement = e.currentTarget;
+    getSearchResults: function() {
+        // Use liquidmetal to score each model against a query string, and
+        // return an array of models sorted by descending score.
+        var query = $('#search').val();
+        var results = [];
+        var i = 1.0;
+        this.collection.each(function (model) {
+            if (query) {
+                var candidate = model.getSearchString();
+                var score = LiquidMetal.score(candidate, query);
+                if (score > 0) {
+                    results.push([score, model]);
+                }
+            } else {
+                results.push([-i, model]);
+                i = i + 1.0;
+            }
+        });
+        return results.sort(function (a, b) { return b[0] - a[0]; });
+    },
+    selectedRowChanged: function(row) {
+        if (this.selectedRow) {
+            this.selectedRow.$el.toggleClass('active');
+        }
+        row.$el.toggleClass('active');
+        this.selectedRow = row;
+        App.trigger('selectedModelChanged', row.model);
+    },
+    selectNextRow: function() {
+        if (this.selectedRow) {
+            var i = this.searchRows.indexOf(this.selectedRow);
+            if (i < this.searchRows.length - 1) {
+                App.trigger('selectedRowChanged', this.searchRows[i+1]);
+            }
+        } else {
+            App.trigger('selectedRowChanged', this.searchRows[0]);
+        }
+    },
+    selectPreviousRow: function() {
+        if (this.selectedRow) {
+            var i = this.searchRows.indexOf(this.selectedRow);
+            if (i > 0) {
+                App.trigger('selectedRowChanged', this.searchRows[i-1]);
+            }
+        } else {
+            App.trigger('selectedRowChanged', this.searchRows[0]);
+        }
     }
 });
 
 var ViewPanel = Backbone.View.extend({
     el: '#viewpanel',
     initialize: function() {
+        this.model = null;
         var view = this;
-        _.bindAll(this, 'render');
-        App.bind('selectedPatternChanged', this.render);
+        _.bindAll(this, 'selectedModelChanged');
+        App.bind('selectedModelChanged', this.selectedModelChanged);
         App.editor = CodeMirror.fromTextArea(document.getElementById('viewcode'), {
             mode: "python",
             theme: "elegant",
@@ -126,7 +184,7 @@ var ViewPanel = Backbone.View.extend({
     },
     render: function() {
         var view = this;
-        var pattern = App.selectedPattern.toJSON();
+        var pattern = this.model.toJSON();
         this.$('#modulename').html(pattern.view_module);
         this.$('#viewname').html(pattern.view_name);
         this.$('#regex').html(pattern.raw_pattern);
@@ -138,61 +196,51 @@ var ViewPanel = Backbone.View.extend({
             App.editor.setValue(attributes.source);
             App.editor.setOption('firstLineNumber', attributes.line_number);
         }});
+    },
+    selectedModelChanged: function(model) {
+        this.model = model;
+        this.render();
     }
 });
+
 
 /* Setup */
 
 $(function () {
-    var root = 'file:///Users/jkocherhans/Projects/urlviz/static/';
-    var workspace = new Workspace();
-    Backbone.history.start({pushState: true, root: root});
-    //workspace.navigate('urlpatterns', {trigger: true, replace: false});
+    // var root = 'file:///Users/jkocherhans/Projects/urlviz/static/';
+    // var workspace = new Workspace();
+    // Backbone.history.start({pushState: true, root: root});
+    // workspace.navigate('urlpatterns', {trigger: true, replace: false});
 
-    var urlPatterns = new URLPatterns([]);
-
-    var urlPatternListView = new URLPatternListView({
-        collection: urlPatterns,
-        el: $('#urlpatterns')
-    });
-    urlPatternListView.render();
-
-    var viewPanel = new ViewPanel();
-
-    urlPatterns.fetch();
+    // Initialze with an empty collection. We'll fetch them later.
+    // This allows the view to render quickly, but update itself once the
+    // real data loads.
+    // var collectionName = 'urlpatterns';
+    var collectionName = 'templates';
+    var collection;
+    if (collectionName == 'urlpatterns') {
+        collection = new URLPatterns([]);
+        var viewPanel = new ViewPanel();
+    } else if (collectionName == 'templates') {
+        collection = new TemplatePaths([]);
+    }
+    var searchList = new SearchList({collection: collection, el: $('#searchlist')});
+    searchList.render();
+    collection.fetch();
 
     $('#search').focus();
-    $('#searchform').bind('keyup', function (e) {
-        if (e.keyCode == 38 || e.keyCode == 40) {
-        } else {
-            urlPatternListView.render();
-            $('#urlpatterns').children('li.urlpattern').first().click();
-        }
-    });
     $('body').bind('keyup', function (e) {
         var activeElement;
         var nextElement;
         if (e.keyCode == 27) {
             $('#search').val('').focus();
-            urlPatternListView.render();
+            searchList.render();
         } else if (e.keyCode == 38) {
             // Up arrow
-            if (App.selectedPattern !== null) {
-                activeElement = $('li.active');
-                nextElement = activeElement.prev('li.urlpattern');
-                nextElement.click();
-            } else {
-                $('#urlpatterns').children('li.urlpattern').first().click();
-            }
+            searchList.selectPreviousRow();
         } else if (e.keyCode == 40) {
             // Down arrow
-            if (App.selectedPattern !== null) {
-                activeElement = $('li.active');
-                nextElement = activeElement.next('li.urlpattern');
-                nextElement.click();
-            } else {
-                $('#urlpatterns').children('li.urlpattern').first().click();
-            }
+            searchList.selectNextRow();
         }
     });
 });
