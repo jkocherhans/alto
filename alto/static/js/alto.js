@@ -1,19 +1,38 @@
-window.App = {};
-_.extend(App, Backbone.Events);
+(function($) {
 
+var alto = {};
+window.alto = alto;
+_.extend(alto, Backbone.Events);
+
+alto.initialize = function(options) {
+    if (options.mode) {
+        alto.mode = options.mode;
+    } else {
+        alto.mode = 'urls';
+    }
+    alto.url_scheme = options.url_scheme;
+    alto.query = options.query;
+};
 
 /* Router */
 
 var Workspace = Backbone.Router.extend({
     routes: {
-        'urlpatterns': 'pattern_list',
-        'urlpatterns/:pattern_id': 'pattern_detail'
+        'urls/': 'pattern_list',
+        'templates/': 'template_list'
     },
     pattern_list: function() {
-        console.log('pattern_list');
+        alto.urlPatterns = new URLPatterns([]);
+        alto.searchList = new SearchList({collection: alto.urlPatterns, el: $('#searchlist')});
+        alto.viewPanel = new ViewPanel();
+        alto.searchList.render();
+        alto.urlPatterns.fetch();
     },
-    pattern_detail: function (pattern_id) {
-        console.log('pattern_detail: ' + pattern_id);
+    template_list: function (pattern_id) {
+        alto.tempatePaths = new TemplatePaths([]);
+        alto.searchList = new SearchList({collection: alto.tempatePaths, el: $('#searchlist')});
+        alto.searchList.render();
+        alto.tempatePaths.fetch();
     }
 });
 
@@ -62,7 +81,7 @@ var TemplatePath = Backbone.Model.extend({
 
 var TemplatePaths = Backbone.Collection.extend({
     model: TemplatePath,
-    url: 'templates/'
+    url: 'template-paths/'
 });
 
 
@@ -85,7 +104,7 @@ var SearchRow = Backbone.View.extend({
     },
     select: function(e) {
         e.preventDefault();
-        App.trigger('selectedRowChanged', this);
+        alto.trigger('selectedRowChanged', this);
     }
 });
 
@@ -100,7 +119,7 @@ var SearchList = Backbone.View.extend({
         this.collection.bind('reset', this.render);
 
         _.bindAll(this, 'selectedRowChanged');
-        App.bind('selectedRowChanged', this.selectedRowChanged);
+        alto.bind('selectedRowChanged', this.selectedRowChanged);
     },
     render: function() {
         var view = this;
@@ -142,26 +161,26 @@ var SearchList = Backbone.View.extend({
         }
         row.$el.toggleClass('active');
         this.selectedRow = row;
-        App.trigger('selectedModelChanged', row.model);
+        alto.trigger('selectedModelChanged', row.model);
     },
     selectNextRow: function() {
         if (this.selectedRow) {
             var i = this.searchRows.indexOf(this.selectedRow);
             if (i < this.searchRows.length - 1) {
-                App.trigger('selectedRowChanged', this.searchRows[i+1]);
+                alto.trigger('selectedRowChanged', this.searchRows[i+1]);
             }
         } else {
-            App.trigger('selectedRowChanged', this.searchRows[0]);
+            alto.trigger('selectedRowChanged', this.searchRows[0]);
         }
     },
     selectPreviousRow: function() {
         if (this.selectedRow) {
             var i = this.searchRows.indexOf(this.selectedRow);
             if (i > 0) {
-                App.trigger('selectedRowChanged', this.searchRows[i-1]);
+                alto.trigger('selectedRowChanged', this.searchRows[i-1]);
             }
         } else {
-            App.trigger('selectedRowChanged', this.searchRows[0]);
+            alto.trigger('selectedRowChanged', this.searchRows[0]);
         }
     }
 });
@@ -172,11 +191,11 @@ var ViewPanel = Backbone.View.extend({
         this.model = null;
         var view = this;
         _.bindAll(this, 'selectedModelChanged');
-        App.bind('selectedModelChanged', this.selectedModelChanged);
-        App.editor = CodeMirror.fromTextArea(document.getElementById('viewcode'), {
+        alto.bind('selectedModelChanged', this.selectedModelChanged);
+        alto.editor = CodeMirror.fromTextArea(document.getElementById('viewcode'), {
             mode: "python",
             theme: "elegant",
-            lineWrapping: true,
+            lineWraltoing: true,
             lineNumbers: true,
             firstLineNumber: view.line_number,
             readOnly: true
@@ -191,10 +210,10 @@ var ViewPanel = Backbone.View.extend({
         var djangoView = new DjangoView({modulePath: pattern.view_module, viewName: pattern.view_name});
         djangoView.fetch({success: function (model, response) {
             var attributes = model.toJSON();
-            view.$('#filename').attr('href', '{{ url_scheme }}://open?url=file://' + attributes.file + '&line=' + attributes.line_number);
+            view.$('#filename').attr('href', alto.url_scheme + '://open?url=file://' + attributes.file + '&line=' + attributes.line_number);
             view.$('#filename').text(attributes.file);
-            App.editor.setValue(attributes.source);
-            App.editor.setOption('firstLineNumber', attributes.line_number);
+            alto.editor.setValue(attributes.source);
+            alto.editor.setOption('firstLineNumber', attributes.line_number);
         }});
     },
     selectedModelChanged: function(model) {
@@ -207,40 +226,29 @@ var ViewPanel = Backbone.View.extend({
 /* Setup */
 
 $(function () {
-    // var root = 'file:///Users/jkocherhans/Projects/urlviz/static/';
-    // var workspace = new Workspace();
-    // Backbone.history.start({pushState: true, root: root});
-    // workspace.navigate('urlpatterns', {trigger: true, replace: false});
-
-    // Initialze with an empty collection. We'll fetch them later.
-    // This allows the view to render quickly, but update itself once the
-    // real data loads.
-    // var collectionName = 'urlpatterns';
-    var collectionName = 'templates';
-    var collection;
-    if (collectionName == 'urlpatterns') {
-        collection = new URLPatterns([]);
-        var viewPanel = new ViewPanel();
-    } else if (collectionName == 'templates') {
-        collection = new TemplatePaths([]);
-    }
-    var searchList = new SearchList({collection: collection, el: $('#searchlist')});
-    searchList.render();
-    collection.fetch();
+    var root = '/_alto/';
+    var workspace = new Workspace();
+    Backbone.history.start({pushState: true, root: root});
+    workspace.navigate(alto.mode + '/', {trigger: true});
 
     $('#search').focus();
     $('body').bind('keyup', function (e) {
         var activeElement;
         var nextElement;
         if (e.keyCode == 27) {
+            // Esc
             $('#search').val('').focus();
-            searchList.render();
+            alto.searchList.render();
         } else if (e.keyCode == 38) {
             // Up arrow
-            searchList.selectPreviousRow();
+            alto.searchList.selectPreviousRow();
         } else if (e.keyCode == 40) {
             // Down arrow
-            searchList.selectNextRow();
+            alto.searchList.selectNextRow();
+        } else {
+            alto.searchList.render();
         }
     });
 });
+
+})(jQuery);

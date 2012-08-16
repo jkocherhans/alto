@@ -6,12 +6,13 @@ from alto import urlviz
 from alto.templates import find_templates
 
 
-def index(request):
+def index(request, mode=None):
     url_scheme = getattr(settings, 'ALTO_URL_SCHEME', 'mvim')
     query = request.GET.get('q', '')
     return render(request, 'alto/index.html', {
         'url_scheme': url_scheme,
         'query': query,
+        'mode': mode or '',
     })
 
 def url_patterns(request):
