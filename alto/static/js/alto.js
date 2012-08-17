@@ -8,7 +8,7 @@ alto.initialize = function(options) {
     if (options.mode) {
         alto.mode = options.mode;
     } else {
-        alto.mode = 'urls';
+        alto.mode = 'views';
     }
     alto.url_scheme = options.url_scheme;
     alto.query = options.query;
@@ -18,7 +18,7 @@ alto.initialize = function(options) {
 
 var Workspace = Backbone.Router.extend({
     routes: {
-        'urls/': 'pattern_list',
+        'views/': 'pattern_list',
         'templates/': 'template_list'
     },
     pattern_list: function() {

@@ -8,11 +8,26 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}css/alto.css" type="text/css">
   </head>
   <body>
-    <div>
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <form id="searchform" class="navbar-search pull-left">
+                    <input type="text" name="q" id="search" value="{{ query }}" class="search-query">
+                </form>
+                <ul class="nav">
+                  <li class="{% if mode = 'urls' %}active{% endif %}">
+                    <a href="../views/">Views</a>
+                  </li>
+                  <li class="{% if mode = 'templates' %}active{% endif %}">
+                    <a href="../templates/">Templates</a>
+                  </li>
+                </ul>
+                <a class="brand" href="https://github.com/jkocherhans/alto">alto</a>
+            </div>
+        </div>
+    </div>
+
       <div id="col1">
-        <form id="searchform">
-            <input type="text" name="q" id="search" value="{{ query }}">
-        </form>
         <ul class="nav nav-pills nav-stacked" id="searchlist"></ul>
       </div>
       <div id="col2">
@@ -24,7 +39,6 @@
         </div>
         <textarea cols="80" rows="10" id="viewcode"></textarea>
       </div>
-    </div>
 
     <script src="{{ STATIC_URL }}js/jquery-1.7.2.js" type="text/javascript"></script>
     <script src="{{ STATIC_URL }}js/underscore.js" type="text/javascript"></script>

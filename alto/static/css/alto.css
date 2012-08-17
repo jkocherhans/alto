@@ -10,7 +10,7 @@
 
 #col1 {
   position: absolute;
-  top: 0;
+  top: 40px;
   bottom: 0;
   overflow-y: auto;
   left: 0;
@@ -20,7 +20,7 @@
 
 #col2 {
   position: absolute;
-  top: 0;
+  top: 40px;
   bottom: 0;
   overflow-y: auto;
   left: 40%;
@@ -28,9 +28,16 @@
   padding: 8px;
 }
 
-#search {
-  width: 95%;
-  margin: 10px;
+.navbar-fixed-top .container {
+  width: 100%;
+}
+
+.navbar-search {
+  padding-left: 20px;
+}
+
+.navbar .brand {
+  float: right;
 }
 
 .capturegroup {
