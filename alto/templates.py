@@ -1,17 +1,25 @@
 import os
 from django.conf import settings
-from django.template.loader import find_template_loader
+from django.template import loader
+
+
+def find_template(name):
+    template = loader.get_template(name)
+    template_path = template.origin.name
+    with open(template_path, 'r') as fh:
+        source = fh.read()
+    return {'name': name, 'file': template_path, 'source': source}
 
 def find_templates():
     # Find all possible template directories.
     loaders = []
     for loader_path in settings.TEMPLATE_LOADERS:
-        loaders.append(find_template_loader(loader_path))
+        loaders.append(loader.find_template_loader(loader_path))
 
     paths = []
-    for loader in loaders:
+    for template_loader in loaders:
         temp_name = '__TEMP__.HTML'
-        for path in loader.get_template_sources(temp_name):
+        for path in template_loader.get_template_sources(temp_name):
             paths.append(path.strip(temp_name))
 
     # Find all possible templates in those template directories.

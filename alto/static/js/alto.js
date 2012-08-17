@@ -31,6 +31,7 @@ var Workspace = Backbone.Router.extend({
     template_list: function (pattern_id) {
         alto.tempatePaths = new TemplatePaths([]);
         alto.searchList = new SearchList({collection: alto.tempatePaths, el: $('#searchlist')});
+        alto.viewPanel = new CodePanel();
         alto.searchList.render();
         alto.tempatePaths.fetch();
     }
@@ -81,7 +82,14 @@ var TemplatePath = Backbone.Model.extend({
 
 var TemplatePaths = Backbone.Collection.extend({
     model: TemplatePath,
-    url: 'template-paths/'
+    url: '/_alto/template-paths/'
+});
+
+var Template = Backbone.Model.extend({
+    initialize: function() {},
+    urlRoot: function () {
+        return '/_alto/templates/' + this.get('name') + '/';
+    }
 });
 
 
@@ -195,7 +203,7 @@ var ViewPanel = Backbone.View.extend({
         alto.editor = CodeMirror.fromTextArea(document.getElementById('viewcode'), {
             mode: "python",
             theme: "elegant",
-            lineWraltoing: true,
+            lineWrapping: true,
             lineNumbers: true,
             firstLineNumber: view.line_number,
             readOnly: true
@@ -214,6 +222,41 @@ var ViewPanel = Backbone.View.extend({
             view.$('#filename').text(attributes.file);
             alto.editor.setValue(attributes.source);
             alto.editor.setOption('firstLineNumber', attributes.line_number);
+        }});
+    },
+    selectedModelChanged: function(model) {
+        this.model = model;
+        this.render();
+    }
+});
+
+
+var CodePanel = Backbone.View.extend({
+    el: '#viewpanel',
+    initialize: function() {
+        this.model = null;
+        var view = this;
+        _.bindAll(this, 'selectedModelChanged');
+        alto.bind('selectedModelChanged', this.selectedModelChanged);
+        alto.editor = CodeMirror.fromTextArea(document.getElementById('viewcode'), {
+            mode: "python",
+            theme: "elegant",
+            lineWrapping: true,
+            lineNumbers: true,
+            firstLineNumber: view.line_number,
+            readOnly: true
+        });
+    },
+    render: function() {
+        var view = this;
+        var template = new Template({name: this.model.get('name')});
+        this.$('#viewname').html(this.model.get('name'));
+        template.fetch({success: function (model, response) {
+            var attributes = model.toJSON();
+            view.$('#filename').attr('href', alto.url_scheme + '://open?url=file://' + attributes.file);
+            view.$('#filename').text(attributes.file);
+            alto.editor.setValue(attributes.source);
+            alto.editor.setOption('firstLineNumber', 1);
         }});
     },
     selectedModelChanged: function(model) {
