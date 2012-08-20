@@ -1,14 +1,29 @@
 import os
 from django.conf import settings
 from django.template import loader
+from django.template.loader_tags import ExtendsNode
 
+
+def find_parents(template, parents=None):
+    """
+    Recursively find all of this template's parents and return them as a list.
+    """
+    if parents is None:
+        parents = []
+    for node in template:
+        if isinstance(node, ExtendsNode):
+            parent = loader.get_template(node.parent_name.token.strip('"'))
+            parents.append(parent)
+            return find_parents(parent, parents)
+    return parents
 
 def find_template(name):
     template = loader.get_template(name)
     template_path = template.origin.name
     with open(template_path, 'r') as fh:
         source = fh.read()
-    return {'name': name, 'file': template_path, 'source': source}
+    parents = [{'name': p.name, 'file': p.origin.name} for p in reversed(find_parents(template))]
+    return {'name': name, 'file': template_path, 'source': source, 'parents': parents}
 
 def find_templates():
     # Find all possible template directories.

@@ -248,6 +248,7 @@ var CodePanel = Backbone.View.extend({
     },
     render: function() {
         var view = this;
+        view.$('#parents').html('');
         var template = new Template({name: this.model.get('name')});
         this.$('#viewname').html(this.model.get('name'));
         template.fetch({success: function (model, response) {
@@ -255,7 +256,10 @@ var CodePanel = Backbone.View.extend({
             view.$('#filename').attr('href', alto.url_scheme + '://open?url=file://' + attributes.file);
             view.$('#filename').text(attributes.file);
             alto.editor.setValue(attributes.source);
-            alto.editor.setOption('firstLineNumber', 1);
+            _.each(attributes.parents, function(parent) {
+                var url = alto.url_scheme + '://open?url=file://' + parent.file;
+                view.$('#parents').append('<li><a href="' + url + '">' + parent.name + '</a></li>');
+            });
         }});
     },
     selectedModelChanged: function(model) {
