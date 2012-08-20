@@ -239,11 +239,10 @@ var CodePanel = Backbone.View.extend({
         _.bindAll(this, 'selectedModelChanged');
         alto.bind('selectedModelChanged', this.selectedModelChanged);
         alto.editor = CodeMirror.fromTextArea(document.getElementById('viewcode'), {
-            mode: "python",
+            mode: "htmlmixed",
             theme: "elegant",
             lineWrapping: true,
             lineNumbers: true,
-            firstLineNumber: view.line_number,
             readOnly: true
         });
     },
