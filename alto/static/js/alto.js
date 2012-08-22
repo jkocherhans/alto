@@ -194,7 +194,7 @@ var SearchList = Backbone.View.extend({
 });
 
 var ViewPanel = Backbone.View.extend({
-    el: '#viewpanel',
+    el: '#panel',
     initialize: function() {
         this.model = null;
         var view = this;
@@ -212,14 +212,15 @@ var ViewPanel = Backbone.View.extend({
     render: function() {
         var view = this;
         var pattern = this.model.toJSON();
-        this.$('#modulename').html(pattern.view_module);
-        this.$('#viewname').html(pattern.view_name);
-        this.$('#regex').html(pattern.raw_pattern);
+        this.$('#paneldetails').html('');
+        this.$('h2').html(pattern.view_name);
+        this.$('#paneldetails').append('<p id="modulename">' + pattern.view_module + '</p>');
+        this.$('#paneldetails').append('<code id="regex">' + pattern.raw_pattern + '</code>');
         var djangoView = new DjangoView({modulePath: pattern.view_module, viewName: pattern.view_name});
         djangoView.fetch({success: function (model, response) {
             var attributes = model.toJSON();
-            view.$('#filename').attr('href', alto.url_scheme + '://open?url=file://' + attributes.file + '&line=' + attributes.line_number);
-            view.$('#filename').text(attributes.file);
+            var url = alto.url_scheme + '://open?url=file://' + attributes.file + '&line=' + attributes.line_number;
+            $('#filename').html('<a href="' + url + '">' + attributes.file + '</a>');
             alto.editor.setValue(attributes.source);
             alto.editor.setOption('firstLineNumber', attributes.line_number);
         }});
@@ -232,7 +233,7 @@ var ViewPanel = Backbone.View.extend({
 
 
 var CodePanel = Backbone.View.extend({
-    el: '#viewpanel',
+    el: '#panel',
     initialize: function() {
         this.model = null;
         var view = this;
@@ -248,17 +249,17 @@ var CodePanel = Backbone.View.extend({
     },
     render: function() {
         var view = this;
-        view.$('#parents').html('');
+        this.$('h2').html(this.model.get('name'));
+        view.$('#paneldetails').html('');
         var template = new Template({name: this.model.get('name')});
-        this.$('#viewname').html(this.model.get('name'));
         template.fetch({success: function (model, response) {
             var attributes = model.toJSON();
-            view.$('#filename').attr('href', alto.url_scheme + '://open?url=file://' + attributes.file);
-            view.$('#filename').text(attributes.file);
+            var url = alto.url_scheme + '://open?url=file://' + attributes.file;
+            $('#filename').html('<a href="' + url + '">' + attributes.file + '</a>');
             alto.editor.setValue(attributes.source);
             _.each(attributes.parents, function(parent) {
                 var url = alto.url_scheme + '://open?url=file://' + parent.file;
-                view.$('#parents').append('<li><a href="' + url + '">' + parent.name + '</a></li>');
+                view.$('#paneldetails').append('<li><a href="' + url + '">' + parent.name + '</a></li>');
             });
         }});
     },
