@@ -1,3 +1,9 @@
+Release 0.3.0 (2012-08-23)
+==========================
+
+Added the ability to search and view templates and their parents.
+
+
 Release 0.2.3 (2012-08-08)
 ==========================
 
