@@ -65,7 +65,7 @@ def inspect_pattern(pattern, prefix=None):
         'prefix': prefix,
         'regex': pattern.regex.pattern,
         'name': pattern.name,
-        'default_args': pattern.default_args,
+        'default_args': str(pattern.default_args),
         'annotated_pattern': normalized_pattern % annotations,
         'normalized_pattern': normalized_pattern % group_names,
         'raw_pattern': prefix + pattern.regex.pattern,
