@@ -1,3 +1,9 @@
+Release 0.3.1 (2012-09-04)
+==========================
+
+Fixed some bugs with template loading.
+
+
 Release 0.3.0 (2012-08-23)
 ==========================
 
