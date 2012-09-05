@@ -1,17 +1,21 @@
 import os
 from django.conf import settings
-from django.template import loader
+from django.template import loader, TemplateDoesNotExist
 from django.template.loader_tags import ExtendsNode
 
 
 def find_template_source(name):
+    """
+    Load the source code and origin of the first template that matches the
+    given name.
+    """
     for loader_path in settings.TEMPLATE_LOADERS:
         template_loader = loader.find_template_loader(loader_path)
         try:
             source, origin = template_loader.load_template_source(name)
-            break
-        except Exception as e:
-            print e
+        except TemplateDoesNotExist:
+            continue
+        break
     return source, origin
 
 def find_parents(name, parents=None):
