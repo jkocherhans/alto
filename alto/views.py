@@ -13,6 +13,7 @@ def index(request, mode=None):
         'url_scheme': url_scheme,
         'query': query,
         'mode': mode or '',
+        'STATIC_URL': '/_alto/media/',
     })
 
 def url_patterns(request):

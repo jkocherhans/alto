@@ -32,9 +32,8 @@ Setup
 
 1. Add ``'alto'`` to your ``INSTALLED_APPS``
 2. Make sure ``TEMPLATE_LOADERS`` includes `'django.template.loaders.app_directories.Loader'`.
-3. Make sure ``STATICFILES_FINDERS`` includes `'django.contrib.staticfiles.finders.AppDirectoriesFinder'`.
-4. Add ``url(r'^_alto/', include('alto.urls'))`` to your urlpatterns
-5. Visit http://127.0.0.1:8000/_alto/
+3. Add ``url(r'^_alto/', include('alto.urls'))`` to your urlpatterns
+4. Visit http://127.0.0.1:8000/_alto/
 
 Optional: Add ``ALTO_URL_SCHEME = 'txmt'`` to your settings for TextMate support. The default is ``'mvim'``.
 
