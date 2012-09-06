@@ -31,13 +31,10 @@ Setup
 -----
 
 1. Add ``'alto'`` to your ``INSTALLED_APPS``
-2. Add ``url(r'^_alto/', include('alto.urls'))`` to your urlpatterns
+2. Add ``'alto.middleware.AltoMiddleware'`` to your ``MIDDLEWARE_CLASSES``
 3. Visit http://127.0.0.1:8000/_alto/
 
 Optional: Add ``ALTO_URL_SCHEME = 'txmt'`` to your settings for TextMate support. The default is ``'mvim'``.
-
-.. warning::
-    alto will expose your source code through the browser, so make sure to secure its views. One way to handle this is to only add its urlpatterns if ``DEBUG=True``.
 
 
 Thanks
