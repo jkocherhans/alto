@@ -1,11 +1,16 @@
-from alto.tests.decorators import view_decorator
+from alto.tests import decorators
 
 def basic_view(request):
     """This is a basic test view."""
     pass
 
-@view_decorator
-def decorated_view(request):
+@decorators.decorator_function
+def function_decorated_view(request):
+    """This is a decorated function view."""
+    pass
+
+@decorators.DecoratorClass()
+def instance_decorated_view(request):
     """This is a decorated function view."""
     pass
 

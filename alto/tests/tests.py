@@ -23,7 +23,7 @@ class BasicPatternTest(unittest.TestCase):
         self.assertEqual(data['view_module'], 'alto.tests.views')
         self.assertEqual(data['view_name'], 'basic_view')
         self.assertEqual(data['prefix'], '')
-        self.assertEqual(data['default_args'], {})
+        self.assertEqual(data['default_args'], '{}')
 
 class BasicStringPatternTest(unittest.TestCase):
     def setUp(self):
@@ -51,14 +51,14 @@ class BasicNamedPatternTest(unittest.TestCase):
 class BasicDefaultArgsPatternTest(unittest.TestCase):
     def setUp(self):
         self.args = {'template': 'test.html'}
-        self.pattern = RegexURLPattern(r'^test/$', views.basic_view, default_args=self.args)
+        self.pattern = RegexURLPattern(r'^test/$', views.basic_view, default_args=str(self.args))
 
     def test_pattern(self):
-        self.assertEqual(self.pattern.default_args, self.args)
+        self.assertEqual(self.pattern.default_args, str(self.args))
 
     def test_inspect_pattern(self):
         data = urlviz.inspect_pattern(self.pattern)
-        self.assertEqual(data['default_args'], self.args)
+        self.assertEqual(data['default_args'], str(self.args))
 
 class BasicCaptureGroupTest(unittest.TestCase):
     def test_positional_arg(self):
@@ -79,7 +79,7 @@ class BasicCaptureGroupTest(unittest.TestCase):
 
 class IncludedPatternTest(unittest.TestCase):
     def test_included_pattern(self):
-        p = urlviz.inspect_urlpatterns()[2]
+        p = urlviz.inspect_urlpatterns()[3]
         self.assertEqual(p['raw_pattern'], '^testapp/basic_view/$')
         self.assertEqual(p['normalized_pattern'], 'testapp/basic_view/')
         self.assertEqual(p['annotated_pattern'], 'testapp/basic_view/')
@@ -87,7 +87,7 @@ class IncludedPatternTest(unittest.TestCase):
 class ResolverTest(unittest.TestCase):
     def test_settings_resolver(self):
         data = urlviz.inspect_urlpatterns()
-        self.assertEqual(len(data), 4)
+        self.assertEqual(len(data), 5)
 
 # Views #######################################################################
 
@@ -102,11 +102,19 @@ class FunctionTest(unittest.TestCase):
         self.assertTrue('source' in data)
         self.assertTrue('sourcelines' in data)
 
-class DecoratedFunctionTest(unittest.TestCase):
+class FunctionDecoratedTest(unittest.TestCase):
     def test_extract_view(self):
-        view, decorators = urlviz.extract_view(views.decorated_view)
+        view, decorators = urlviz.extract_view(views.function_decorated_view)
         data = urlviz.inspect_view(view)
-        self.assertEqual(data['name'], 'decorated_view')
+        self.assertEqual(data['name'], 'function_decorated_view')
+        self.assertEqual(data['doc'], 'This is a decorated function view.')
+        self.assertTrue(data['file'].endswith('alto/tests/views.py'))
+
+class InstanceDecoratedTest(unittest.TestCase):
+    def test_extract_view(self):
+        view, decorators = urlviz.extract_view(views.instance_decorated_view)
+        data = urlviz.inspect_view(view)
+        self.assertEqual(data['name'], 'instance_decorated_view')
         self.assertEqual(data['doc'], 'This is a decorated function view.')
         self.assertTrue(data['file'].endswith('alto/tests/views.py'))
 

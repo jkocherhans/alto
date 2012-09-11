@@ -47,3 +47,7 @@ def post_detail(blog_id, post_id):
     The detail page for a blog post.
     """
     return http.HttpResponse('blog: %s post: %s' % (blog_id, post_id))
+
+@decorators.DecoratorClass()
+def decorated_with_instance():
+    return http.HttpResponse('decorated_with_instance')
