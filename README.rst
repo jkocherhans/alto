@@ -11,9 +11,9 @@ tags, filters, and celery tasks.
 
 At some point, Alto may become a `Light Table`_ plugin.
 
-Alto is PRE-ALPHA software. It probably won't work with your project. There is
-no support. Unless you're ready to work on it, you should hold off for a few
-releases.
+Alto is ALPHA software. It may or may not work with your project. Bug reports
+without patches are unlikely to be fixed for now, so unless you're ready to work
+on it, you should hold off for a few releases.
 
 .. _`Light Table`: http://www.chris-granger.com/2012/04/12/light-table---a-new-ide-concept/
 
@@ -39,9 +39,9 @@ Setup
 2. Add ``'alto.middleware.AltoMiddleware'`` to your ``MIDDLEWARE_CLASSES``
 3. Visit http://127.0.0.1:8000/_alto/
 
-.. image:: https://raw.github.com/jkocherhans/alto/master/docs/images/templates.png
+.. image:: https://s3.amazonaws.com/jkocherhans/alto/templates.png
    :width: 600
-   :target: https://raw.github.com/jkocherhans/alto/master/docs/images/templates.png
+   :target: https://s3.amazonaws.com/jkocherhans/alto/templates.png
 
 Configuration
 -------------

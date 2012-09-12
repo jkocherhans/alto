@@ -1,3 +1,9 @@
+Release 0.4 (2012-09-12)
+========================
+
+Simplified installation and moved to alpha status.
+
+
 Release 0.3.1 (2012-09-04)
 ==========================
 
